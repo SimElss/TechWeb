@@ -1,5 +1,5 @@
-from app.schemas import Book
-from app.database import database
+from ..schemas.books import Book
+from ..database import database
 
 
 def save_books(new_book: Book) -> Book:
@@ -9,8 +9,7 @@ def save_books(new_book: Book) -> Book:
 
 def get_all_books() -> list[Book]:
     books_data = database["books"]
-    books = [Book.model_validate(data) for data in books_data]
-    return books
+    return books_data
 
 
 def delete_book(book_id: str) -> None:
@@ -22,7 +21,7 @@ def delete_book(book_id: str) -> None:
 def modify_book(book_id: str, new_book: Book) -> Book:
     for index, book in enumerate(database["books"]):
         if book["id"] == book_id:
-            database["books"][index] = new_book.dict()
+            database["books"][index] = new_book
             return new_book
     return None
 
