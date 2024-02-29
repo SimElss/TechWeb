@@ -1,7 +1,16 @@
 from fastapi import APIRouter, HTTPException, status
 from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books
 
+from fastapi import APIRouter, HTTPException, status, Request, Form
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
+from pydantic import ValidationError
+
+from my_app.schemas import books
+import my_app.services.books as service
+
 router = APIRouter()
+templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 def index():
