@@ -1,11 +1,11 @@
-{% macro show_ooks(name, author, editor) %}
+{% macro show_books(id, name, Author, Editor) %}
     <tr>
+        <td> {{ id }} </td>
+
         <td>{{ name }}</td>
         
-        <td>
-        {{author}}
-        </td>
+        <td>{{ Author }}</td>
 
-        <td>{editor}</td>
+        <td>{{ Editor }}</td>
     </tr>
 {% endmacro %}

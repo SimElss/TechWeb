@@ -7,18 +7,26 @@
 <div class="container">
     <table class="table">
         <tr>
+            <th>Id</th>
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
         </tr>
         {% for book in books %}
-            {{ show_books(book.name, book.author, book.editor) }}
+            {{ show_books(book.id, book.name, book.Author, book.Editor) }}
         {% endfor %}
     </table> 
 </div>
 
 <div>
-    <button><a href="/new">Ajouter un nouveau livre</a></button>
+    <button><a href="/save">Ajouter un nouveau livre</a></button><br>
+    <button><a href="/modify">Modifier un livre</a></button><br>
 </div>
+
+<form action="/liste" method="post">
+    <h3>Supprimer un livre</h3>
+    <label for="book_id"> ID : <input type="text" name="id" required="true"/> </label>
+    <button type="submit">Supprimer</button> <br><br>
+</form>
 
 {% endblock %}

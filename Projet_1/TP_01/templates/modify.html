@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+{% from "book_macro.html" import show_books %}
+
+{% block content %}
+
+<h1>Modifier un livre</h1>
+<h3>Nombre de livres : {{Nombre}}</h3>
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Nom</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+        </tr>
+        {% for book in books %}
+            {{ show_books(book.id, book.name, book.Author, book.Editor) }}
+        {% endfor %}
+    </table> 
+</div>
+<br><br><br>
+<form action="/modify" method="post">
+
+    <div>
+        <label for="book_name">Id</label>
+        <input type="text"  id="book_name"
+               name="id" required="true"/>
+    </div>
+
+    <div>
+        <label for="book_name">Nouveau nom</label>
+        <input type="text"  id="book_name"
+               name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
+    </div>
+
+    <div>
+        <label for="book_author">Nouvel auteur</label>
+        <input type="text" id="book_auhtor"
+               name="Author" required="true" placeholder="Rick Riordan"/>
+    </div>
+
+    <div>
+        <label for="book_editor">Nouvel editeur</label>
+        <input type="text" id="book_editor"
+               name="Editor" required="true" placeholder="LPG"/>
+    </div>
+
+    <button type="submit">Modifier le livre</button>
+
+</form>
+
+<div>
+    <a href="/liste">Retour</a>
+</div>
+
+{% endblock %}

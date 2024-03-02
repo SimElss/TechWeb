@@ -3,25 +3,26 @@
 {% block content %}
 
 <h1>Ajouter un nouveau livre</h1>
+<h3>Nombre de livres : {{Nombre}}</h3>
 
-<form action="/new" method="post">
+<form action="/save" method="post">
 
     <div>
         <label for="book_name">Nom du livre</label>
         <input type="text"  id="book_name"
-               name="name" placeholder="Percy Jackson et le voleur de foudre" />
+               name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
     </div>
 
     <div>
         <label for="book_author">Auteur</label>
         <input type="text" id="book_auhtor"
-               name="author" />
+               name="Author" required="true", placeholder="Rick Riordan"/>
     </div>
 
     <div>
         <label for="book_editor">Editeur</label>
         <input type="text" id="book_editor"
-               name="editor" />
+               name="Editor" required="true", placeholder="LPG"/>
     </div>
 
     <button type="submit">Rajouter le livre</button>
