@@ -1,0 +1,24 @@
+{% extends "index.html"%}
+{% from "book_macro.html" import show_books %}
+
+{% block content %}
+
+<h3>Nombre de livres : {{Nombre}}</h3>
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>Nom</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+        </tr>
+        {% for book in books %}
+            {{ show_books(book.name, book.author, book.editor) }}
+        {% endfor %}
+    </table> 
+</div>
+
+<div>
+    <button><a href="/new">Ajouter un nouveau livre</a></button>
+</div>
+
+{% endblock %}
