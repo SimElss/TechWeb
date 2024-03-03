@@ -3,8 +3,6 @@
 
 {% block content %}
 
-<h1>Modifier un livre</h1>
-<h3>Nombre de livres : {{Nombre}}</h3>
 <div class="container">
     <table class="table">
         <tr>
@@ -16,41 +14,45 @@
         {% for book in books %}
             {{ show_books(book.id, book.name, book.Author, book.Editor) }}
         {% endfor %}
+
+        <th colspan="4">Nombre de livres : {{Nombre}}</th>
     </table> 
 </div>
-<br><br><br>
-<form action="/modify" method="post">
+<br>
+<div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
+    <h2 class = "display-6 text-center">Modifier le livre</h2><br>
+    <form action="/modify" method="post">
+        <div class="input-group mb-3">
+            <label for="book_name" class="input-group-text">Id</label>
+            <input type="text"  id="book_name" class="form-control"
+                name="id" required="true"/>
+        </div>
 
-    <div>
-        <label for="book_name">Id</label>
-        <input type="text"  id="book_name"
-               name="id" required="true"/>
-    </div>
+        <div class="input-group mb-3">
+            <label for="book_name" class="input-group-text">Nouveau nom</label>
+            <input type="text"  id="book_name" class="form-control"
+                name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
+        </div>
 
-    <div>
-        <label for="book_name">Nouveau nom</label>
-        <input type="text"  id="book_name"
-               name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
-    </div>
+        <div class="input-group mb-3">
+            <label for="book_author" class="input-group-text">Nouvel auteur</label>
+            <input type="text" id="book_auhtor" class="form-control"
+                name="Author" required="true" placeholder="Rick Riordan"/>
+        </div>
 
-    <div>
-        <label for="book_author">Nouvel auteur</label>
-        <input type="text" id="book_auhtor"
-               name="Author" required="true" placeholder="Rick Riordan"/>
-    </div>
+        <div class="input-group mb-3">
+            <label for="book_editor" class="input-group-text">Nouvel editeur</label>
+            <input type="text" id="book_editor" class="form-control"
+                name="Editor" required="true" placeholder="LPG"/>
+        </div>
+        <div class="grid text-center">
+            <a href="/liste"><button type="button" class="btn btn-outline-dark p-2 rounded-circle">Retour </button></a>
+            <button type="submit" class="btn btn-outline-dark p-2 rounded-circle">Modifier le livre</button>
+        </div>
 
-    <div>
-        <label for="book_editor">Nouvel editeur</label>
-        <input type="text" id="book_editor"
-               name="Editor" required="true" placeholder="LPG"/>
-    </div>
+    </form>
 
-    <button type="submit">Modifier le livre</button>
-
-</form>
-
-<div>
-    <a href="/liste">Retour</a>
+   
 </div>
 
 {% endblock %}

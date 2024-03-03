@@ -2,35 +2,33 @@
 
 {% block content %}
 
-<h1>Ajouter un nouveau livre</h1>
-<h3>Nombre de livres : {{Nombre}}</h3>
+<form action="/save" method="post" class = "container">
+    <h1>Ajouter un nouveau livre</h1><br>
 
-<form action="/save" method="post">
-
-    <div>
-        <label for="book_name">Nom du livre</label>
-        <input type="text"  id="book_name"
+    <div class="input-group mb-3">
+        <label for="book_name" class="input-group-text">Nom du livre</label>
+        <input type="text"  id="book_name" class="form-control"
                name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
     </div>
 
-    <div>
-        <label for="book_author">Auteur</label>
-        <input type="text" id="book_auhtor"
+    <div class="input-group mb-3">
+        <label for="book_author" class="input-group-text">Auteur</label>
+        <input type="text" id="book_auhtor" class="form-control"
                name="Author" required="true", placeholder="Rick Riordan"/>
     </div>
 
-    <div>
-        <label for="book_editor">Editeur</label>
-        <input type="text" id="book_editor"
+    <div class="input-group mb-3">
+        <label for="book_editor" class="input-group-text">Editeur</label>
+        <input type="text" id="book_editor" class="form-control"
                name="Editor" required="true", placeholder="LPG"/>
-    </div>
+    </div><br>
+    
+    <div class="d-flex justify-content-between">
+        <a href="/liste"><button type="button" class="btn btn-outline-dark p-2 rounded-circle" > Retour </button></a>
+        <button type="submit" class="btn btn-outline-dark rounded-circle">Suivant</button>  
+        <th> Nombres de livres : {{Nombre}} </th>      
 
-    <button type="submit">Rajouter le livre</button>
-
+    </div>    
 </form>
-
-<div>
-    <a href="/liste">Retour</a>
-</div>
 
 {% endblock %}
