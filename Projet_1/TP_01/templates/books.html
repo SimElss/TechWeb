@@ -2,6 +2,20 @@
 {% from "book_macro.html" import show_books %}
 
 {% block content %}
+
+<ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link active" href="/liste">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link link-body-emphasis" href="/save">Ajouter</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
+    </li>
+    
+</ul><br>
+
 <div class="container">
     <table class="table table-hover">
         <tr>
@@ -15,7 +29,7 @@
             {{ show_books(book.id, book.name, book.Author, book.Editor) }}
             
         {% endfor %}
-        <th colspan="4">Nombre de livres : {{Nombre}}</th>
+        <th colspan="4">Nombres de livres : {{Nombre}}</th>
         
     </table>
     <div class="grid text-center" style="margin-bottom: 5%;">
