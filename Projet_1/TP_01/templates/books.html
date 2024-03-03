@@ -2,31 +2,35 @@
 {% from "book_macro.html" import show_books %}
 
 {% block content %}
-
-<h3>Nombre de livres : {{Nombre}}</h3>
 <div class="container">
-    <table class="table">
+    <table class="table table-hover">
         <tr>
             <th>Id</th>
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
+            
         </tr>
         {% for book in books %}
             {{ show_books(book.id, book.name, book.Author, book.Editor) }}
+            
         {% endfor %}
-    </table> 
+        <th colspan="4">Nombre de livres : {{Nombre}}</th>
+        
+    </table>
+    <div class="grid text-center" style="margin-bottom: 5%;">
+        <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>
+        <a href="/modify" ><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Modifier un livre</button></a>
+    
+    </div>
 </div>
-
-<div>
-    <button><a href="/save">Ajouter un nouveau livre</a></button><br>
-    <button><a href="/modify">Modifier un livre</a></button><br>
+<div class = "container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
+<h2 class = "display-6 text-center">Supprimer un livre</h2><br>
+    <form action="/liste" method="post">
+        <label for="book_id" class="input-group mb-3"><input type="text" class = "form-control" placeholder="ID's book" aria-label="ID's book" name="id" required="true">
+            <button type="submit" class="btn btn-outline-dark" >Delete</button>
+        </label>
+    </form>
 </div>
-
-<form action="/liste" method="post">
-    <h3>Supprimer un livre</h3>
-    <label for="book_id"> ID : <input type="text" name="id" required="true"/> </label>
-    <button type="submit">Supprimer</button> <br><br>
-</form>
 
 {% endblock %}
