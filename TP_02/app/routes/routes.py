@@ -1,7 +1,10 @@
 from typing import Annotated
 from uuid import uuid4
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
+from ..login_manager import login_manager
 from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books
+from ..schemas.users import UserSchema
+
 
 from fastapi import APIRouter, status, Request, Form
 from fastapi.responses import RedirectResponse
@@ -13,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 def home():
-    return RedirectResponse(url="/liste", status_code=302)
+    return RedirectResponse(url="/login", status_code=302)
 
 @router.get("/error/{description}")
 def error(request : Request, description: str):
@@ -23,12 +26,12 @@ def error(request : Request, description: str):
     )
 
 @router.get("/liste")
-def list_books(request : Request):
+def list_books(request : Request, user: UserSchema = Depends(login_manager.optional)):
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
         "books.html", 
-        context={'request':request,'books': books, 'Nombre':nb}
+        context={'request':request,'books': books, 'Nombre':nb, 'current_user': user}
     )
 
 @router.post("/liste")

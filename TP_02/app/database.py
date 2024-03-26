@@ -20,6 +20,21 @@ database = {
             "name": "The Hobbit",
             "Author": "J.R.R. Tolkien",
             "Editor": "Bob Doe"
+       
         },
+    ],
+    "users" : [
+
+        {
+            "id": str(uuid4()),
+            "username": "test",
+            "name": "Alice",
+            "surname": "Doe",
+            "email": "test@gmail.com",
+            "password": "1234",
+            "group": "admin"
+        },
+
     ]
+
 }
