@@ -25,22 +25,22 @@ def login_route(
 ):
     user = get_user_by_username(username)
     if user is None or user.password != password:
-        return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Bad credentials."
-        )
+        error=status.HTTP_401_UNAUTHORIZED
+        description=f"Erreur {error} : Mauvais mot de passe ou nom d'utilisateur."
+        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        
     access_token = login_manager.create_access_token(
         data={'sub': user.id}
     )
     
-    response = JSONResponse({"status": "success"})
+    response = RedirectResponse(url="/liste", status_code=302)
     response.set_cookie(
         key=login_manager.cookie_name,
         value=access_token,
         httponly=True
     )
 
-    return RedirectResponse(url="/liste", status_code=302), response
+    return response
 
 @user_router.post('/logout')
 def logout_route():

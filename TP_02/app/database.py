@@ -32,7 +32,7 @@ database = {
             "surname": "Doe",
             "email": "test@gmail.com",
             "password": "1234",
-            "group": "admin"
+            "group": "user"
         },
 
     ]

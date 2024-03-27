@@ -5,4 +5,4 @@ class Book(BaseModel):
     id: str
     name: str
     Author: str
-    Editor: str
+    Editor: str | None
