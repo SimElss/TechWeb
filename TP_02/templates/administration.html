@@ -1,0 +1,31 @@
+{%extends "index.html"%}
+<!-- Peut voir tous les utilisateurs, les bloquer/débloquer ou les promouvoir admins-->
+{% block content %}
+<div class="container">
+    <h1 class="display-6 text-center">Administration</h1>
+    <table class="table table-hover">
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Group</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.group}}</td>
+            <td>
+                {%if user.group == "admin"%}
+                <a href="/promote/{{user.id}}"><button type="button" class="btn btn-outline-dark">Promote</button></a>
+                {%else%}
+                <a href="/block/{{user.id}}"><button type="button" class="btn btn-outline-dark">Block</button></a>
+                {%endif%}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

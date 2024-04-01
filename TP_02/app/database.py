@@ -30,9 +30,9 @@ database = {
             "username": "test",
             "name": "Alice",
             "surname": "Doe",
+            "password": "Test123!",
             "email": "test@gmail.com",
-            "password": "1234",
-            "group": "user"
+            "group": "admin"
         },
 
     ]

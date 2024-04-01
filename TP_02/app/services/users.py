@@ -1,5 +1,7 @@
 from ..database import database
 from ..schemas.users import UserSchema
+from pydantic import ValidationError
+from fastapi import status
 
 
 def get_user_by_username(username: str):
@@ -14,3 +16,7 @@ def get_user_by_id(id: str):
         if user['id'] == id:
             return UserSchema.model_validate(user)
     return None
+
+def add_user(user: UserSchema):
+    new_user = UserSchema.model_validate(user)
+    database['users'].append(user)
