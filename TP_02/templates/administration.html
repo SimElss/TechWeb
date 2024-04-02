@@ -1,6 +1,23 @@
 {%extends "index.html"%}
 <!-- Peut voir tous les utilisateurs, les bloquer/débloquer ou les promouvoir admins-->
 {% block content %}
+<form action="/logout" method="post">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>  
+<ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link link-body-emphasis" href="/liste">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link link-body-emphasis" href="/save">Ajouter</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
+    </li>
+    <li class = "nav-item">
+        <a class = "nav-link active" href="/administration">Admin</a>
+    </li>    
+</ul><br>
 <div class="container">
     <h1 class="display-6 text-center">Administration</h1>
     <table class="table table-hover">
@@ -18,11 +35,26 @@
             <td>{{user.email}}</td>
             <td>{{user.group}}</td>
             <td>
-                {%if user.group == "admin"%}
-                <a href="/promote/{{user.id}}"><button type="button" class="btn btn-outline-dark">Promote</button></a>
+            <div class = "grid text-center" style="display:flex;flex-direction: row">
+                {%if user.group != "admin"%}
+                <form action="/promote/{{user.id}}" method="post" style = "margin-right:5%;">
+                    <button type="submit" class="btn btn-success">Promote</button>
+                </form>
                 {%else%}
-                <a href="/block/{{user.id}}"><button type="button" class="btn btn-outline-dark">Block</button></a>
+                <form action="/promote/{{user.id}}" method="post" style = "margin-right:5%;">
+                    <button type="submit" class="btn btn-warning">Demote</button>
+                </form>
                 {%endif%}
+                {%if user.whitelist != True%}
+                <form action="/block/{{user.id}}" method="post">
+                    <button type="submit" class="btn btn-success">Unblock</button>
+                </form>    
+                {%else%}
+                <form action="/block/{{user.id}}" method="post">
+                    <button type="submit" class="btn btn-danger">Block</button>
+                </form>
+                {%endif%}
+            </div>
             </td>
         </tr>
         {% endfor %}

@@ -1,17 +1,23 @@
 {% extends "index.html" %}
 
 {% block content %}
+<form action="/logout" method="post">
+  <button type="submit" class="btn btn-danger">Logout</button>
+</form> 
 <ul class="nav nav-tabs justify-content-center">
-    <li class="nav-item">
-      <a class="nav-link link-body-emphasis" href="/liste">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="/save">Ajouter</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
-    </li>
-    
+  <li class="nav-item">
+    <a class="nav-link link-body-emphasis" href="/liste">Home</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="/save">Ajouter</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
+  </li>
+  <li class = "nav-item">
+      <a class = "nav-link link-body-emphasis" href="/administration">Admin</a>
+  </li>
+  
 </ul><br>
 
 <form action="/save" method="post" class = "container">

@@ -27,13 +27,24 @@ database = {
 
         {
             "id": str(uuid4()),
-            "username": "test",
-            "name": "Alice",
+            "username": "admin",
+            "name": "admin",
+            "surname": "admin",
+            "password": "Admin!123",
+            "email": "admin@juice-sh.op",
+            "group": "admin",
+            "whitelist": True
+        },
+        {
+            "id": str(uuid4()),
+            "username": "User2",
+            "name": "John",
             "surname": "Doe",
             "password": "Test123!",
             "email": "test@gmail.com",
-            "group": "admin"
-        },
+            "group": "client",
+            "whitelist": True
+        }
 
     ]
 

@@ -3,11 +3,16 @@ from ..database import database
 
 
 def save_books(new_book: Book) -> Book:
+    new_book["id"] = new_book["id"].strip('\t')
     new_book["id"]= new_book["id"].strip(" ")
+    new_book["name"]= new_book["name"].strip('\t')
     new_book["name"]= new_book["name"].strip(" ")
+    new_book["Author"]= new_book["Author"].strip('\t')
     new_book["Author"]= new_book["Author"].strip(" ")
+    new_book["Editor"]= new_book["Editor"].strip('\t')
     new_book["Editor"]= new_book["Editor"].strip(" ")
-    if new_book["id"] == "" or new_book["name"] == "" or new_book["Author"] == "" or new_book["Editor"] == "":
+
+    if new_book["id"] == "" or new_book["name"] == "" or new_book["Author"] == "":
         return None
     database["books"].append(new_book)
     return new_book
@@ -20,19 +25,25 @@ def get_all_books() -> list[Book]:
 
 def delete_book(book_id: str) -> None:
     for index, book in enumerate(database["books"]):
-        if book["id"] == book_id:
+        book_id = book_id.strip('\t')
+        if book["id"] == book_id.strip(" "):
             database["books"].pop(index)
             return 1
     return None
 
 def modify_book(book_id: str, new_book: Book) -> Book:
     for index, book in enumerate(database["books"]):
-        if book["id"] == book_id:
+        book_id = book_id.strip('\t')
+        if book["id"] == book_id.strip(" "):
             new_book["id"]= new_book["id"].strip(" ")
             new_book["name"]= new_book["name"].strip(" ")
+            new_book["name"]= new_book["name"].strip('\t')
             new_book["Author"]= new_book["Author"].strip(" ")
+            new_book["Author"]= new_book["Author"].strip('\t')
+            new_book["Editor"]= new_book["Editor"].strip('\t')
             new_book["Editor"]= new_book["Editor"].strip(" ")
-            if new_book["id"] == "" or new_book["name"] == "" or new_book["Author"] == "" or new_book["Editor"] == "":
+
+            if new_book["id"] == "" or new_book["name"] == "" or new_book["Author"] == "":
                 return None
             database["books"][index] = new_book
             return new_book

@@ -16,15 +16,24 @@ templates = Jinja2Templates(directory="templates")
 def home():
     return RedirectResponse(url="/login", status_code=302)
 
-@router.get("/error/{description}")
-def error(request : Request, description: str):
+@router.get("/tmp")
+def tmp(request : Request, user: UserSchema = Depends(login_manager.optional)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    else:
+        return RedirectResponse(url="/liste", status_code=302)
+
+@router.get("/error/{description}/{url}")
+def error(request : Request, description: str, url: str):
     return templates.TemplateResponse(
         "error.html", 
-        context={'request':request, 'description': description}
+        context={'request':request, 'description': description, 'url': url}
     )
 
 @router.get("/liste")
 def list_books(request : Request, user: UserSchema = Depends(login_manager.optional)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
@@ -38,16 +47,22 @@ def delete(id: Annotated[str, Form()]):
     if response is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error} : pas de livre trouvé avec cet ID"
-        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
 @router.get("/modify")
-def modify(request : Request):
+def modify(request : Request, user: UserSchema = Depends(login_manager.optional)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    if user.group != "admin":
+        error=status.HTTP_403_FORBIDDEN
+        description=f"Erreur {error} : Accès interdit."
+        return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
         "modify.html", 
-        context={'request': request, 'books':books, 'Nombre':nb}
+        context={'request': request, 'books':books, 'Nombre':nb, 'current_user': user}
     )
 
 @router.post("/modify")
@@ -61,24 +76,29 @@ def modify(id: Annotated[str, Form()], name: Annotated[str, Form()], Author: Ann
     if response is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Erreur {error} : Informations invalides données."
-        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
     elif response == 1:
         error = status.HTTP_404_NOT_FOUND
         description = f"Erreur {error} : pas de livre trouvé avec cet ID"
-        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
 @router.get("/save")
-def save(request : Request):
+def save(request : Request, user: UserSchema = Depends(login_manager.optional)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    if user.group != "admin":
+        error=status.HTTP_403_FORBIDDEN
+        description=f"Erreur {error} : Accès interdit."
+        return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     nb = get_number_books()
     return templates.TemplateResponse(
         "save_book.html", 
-        context={'request': request, 'Nombre':nb}
+        context={'request': request, 'Nombre':nb, 'current_user': user}
     )
 
 @router.post("/save")
 def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[str, Form()]):
-    print(0)
     new_book = save_books({
         "id" : str(uuid4()),
         "name" : name,
@@ -88,5 +108,5 @@ def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: A
     if new_book is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Erreur {error} : Informations invalides données."
-        return RedirectResponse(url=f"/error?description={description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/save", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)

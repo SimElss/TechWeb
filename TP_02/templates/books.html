@@ -2,7 +2,9 @@
 {% from "book_macro.html" import show_books %}
 
 {% block content %}
-
+<form action="/logout" method="post">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>  
 <ul class="nav nav-tabs justify-content-center">
     <li class="nav-item">
       <a class="nav-link active" href="/liste">Home</a>
