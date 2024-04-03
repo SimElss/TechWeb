@@ -5,23 +5,17 @@
 <form action="/logout" method="post">
     <button type="submit" class="btn btn-danger">Logout</button>
 </form>  
+{%if current_user.group == "admin"%}
 <ul class="nav nav-tabs justify-content-center">
     <li class="nav-item">
       <a class="nav-link active" href="/liste">Home</a>
     </li>
-    {%if current_user.group == "admin"%}
-    <li class="nav-item">
-      <a class="nav-link link-body-emphasis" href="/save">Ajouter</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
-    </li>
     <li class = "nav-item">
         <a class = "nav-link link-body-emphasis" href="/administration">Admin</a>
     </li>
-    {%endif%}
-    
-</ul><br>
+</ul>
+<br> 
+{%endif%}
 
 <div class="container">
     <table class="table table-hover">
@@ -30,6 +24,7 @@
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
+            <th>Actions</th>
             
         </tr>
         {% for book in books %}
@@ -40,20 +35,7 @@
         
     </table>
     <div class="grid text-center" style="margin-bottom: 5%;">
-        <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>
-        <a href="/modify" ><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Modifier un livre</button></a>
-    
+        <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>    
     </div>
 </div>
-{%if current_user.group == "admin"%}
-<div class = "container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
-<h2 class = "display-6 text-center">Supprimer un livre</h2><br>
-    <form action="/liste" method="post">
-        <label for="book_id" class="input-group mb-3"><input type="text" class = "form-control" placeholder="ID's book" aria-label="ID's book" name="id" required="true">
-            <button type="submit" class="btn btn-outline-dark" >Delete</button>
-        </label>
-    </form>
-</div>
-{%endif%}
-
 {% endblock %}

@@ -6,11 +6,14 @@ from pydantic import ValidationError
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 
 
+#
 app = FastAPI()
 app.include_router(router)
 app.include_router(user_router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 @app.exception_handler(404)

@@ -3,23 +3,7 @@
 {% block content %}
 <form action="/logout" method="post">
   <button type="submit" class="btn btn-danger">Logout</button>
-</form> 
-<ul class="nav nav-tabs justify-content-center">
-  <li class="nav-item">
-    <a class="nav-link link-body-emphasis" href="/liste">Home</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="/save">Ajouter</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link link-body-emphasis" href="/modify">Modifier</a>
-  </li>
-  <li class = "nav-item">
-      <a class = "nav-link link-body-emphasis" href="/administration">Admin</a>
-  </li>
-  
-</ul><br>
-
+</form> <br>
 <form action="/save" method="post" class = "container">
     <h1 class = "display-6 text-center">Ajouter un nouveau livre</h1><br>
 
@@ -31,19 +15,19 @@
 
     <div class="input-group mb-3">
         <label for="book_author" class="input-group-text">Auteur</label>
-        <input type="text" id="book_auhtor" class="form-control"
-               name="Author" required="true", placeholder="Rick Riordan"/>
+        <input type="text" id="book_author" class="form-control"
+               name="Author" required="true" placeholder="Rick Riordan"/>
     </div>
 
     <div class="input-group mb-3">
         <label for="book_editor" class="input-group-text">Editeur</label>
         <input type="text" id="book_editor" class="form-control"
-               name="Editor" required="true", placeholder="LPG"/>
+               name="Editor" placeholder="LPG"/>
     </div><br>
     
     <div class="d-flex justify-content-between">
-        <a href="/liste"><button type="button" class="btn btn-outline-dark p-2 rounded-circle" > Retour </button></a>
-        <button type="submit" class="btn btn-outline-dark rounded-circle">Suivant</button>  
+        <a href="/liste"><button type="button" class="btn btn-outline-dark" > Annuler </button></a>
+        <button type="submit" class="btn btn-outline-dark">Confirmer</button>  
         <h5> Nombres de livres : {{Nombre}} </h5>      
 
     </div>    

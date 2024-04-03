@@ -1,8 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Optional
 from uuid import uuid4
 from fastapi import APIRouter, status, Depends
 from ..login_manager import login_manager
-from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books
+from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books, get_book_by_id
 from ..schemas.users import UserSchema
 from fastapi import APIRouter, status, Request, Form
 from fastapi.responses import RedirectResponse
@@ -41,8 +41,8 @@ def list_books(request : Request, user: UserSchema = Depends(login_manager.optio
         context={'request':request,'books': books, 'Nombre':nb, 'current_user': user}
     )
 
-@router.post("/liste")
-def delete(id: Annotated[str, Form()]):
+@router.post("/delete/{id}")
+def delete(id: str):
     response = delete_book(id)
     if response is None:
         error = status.HTTP_404_NOT_FOUND
@@ -50,34 +50,32 @@ def delete(id: Annotated[str, Form()]):
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
-@router.get("/modify")
-def modify(request : Request, user: UserSchema = Depends(login_manager.optional)):
+@router.get("/modify/{id}")
+def modify(request : Request, id: str, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     if user.group != "admin":
         error=status.HTTP_403_FORBIDDEN
         description=f"Erreur {error} : Accès interdit."
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
+    book = get_book_by_id(id)
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
         "modify.html", 
-        context={'request': request, 'books':books, 'Nombre':nb, 'current_user': user}
+        context={'request': request, 'books':books, 'Nombre':nb, 'current_user': user, 'book': book}
     )
 
-@router.post("/modify")
-def modify(id: Annotated[str, Form()], name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[str, Form()]):
-    response = modify_book(id, {
-        "id" : id,
-        "name" : name,
-        "Author" : Author,
-        "Editor": Editor,
-    })
+@router.post("/modify/{id}")
+def modify(id:str, name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[Optional[str], Form()] = None):
+    if Editor == None:
+        Editor = ""
+    response = modify_book(id, name, Author, Editor)
     if response is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Erreur {error} : Informations invalides données."
         return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
-    elif response == 1:
+    if response == 1:
         error = status.HTTP_404_NOT_FOUND
         description = f"Erreur {error} : pas de livre trouvé avec cet ID"
         return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
@@ -98,7 +96,9 @@ def save(request : Request, user: UserSchema = Depends(login_manager.optional)):
     )
 
 @router.post("/save")
-def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[str, Form()]):
+def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[Optional[str], Form()] = None):
+    if Editor == None:
+        Editor = ""
     new_book = save_books({
         "id" : str(uuid4()),
         "name" : name,

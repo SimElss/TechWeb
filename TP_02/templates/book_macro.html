@@ -4,5 +4,15 @@
         <td>{{ name }}</td>
         <td>{{ Author }}</td>
         <td>{{ Editor }}</td>
+        <td>
+            <div class = "grid text-center" style="display:flex;flex-direction: row">
+                <form action="/modify/{{id}}" method="get" style = "margin-right:5%;">
+                    <button type="submit" id="button_submit"></button>
+                </form>
+                <form action="/delete/{{id}}" method="post" style = "margin-right:5%;">
+                    <button type="submit" id = "button_submit2"></button>
+                </form>
+            </div>
+        </td>
     </tr>
 {% endmacro %}
