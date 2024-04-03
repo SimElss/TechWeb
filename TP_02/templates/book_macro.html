@@ -1,9 +1,10 @@
-{% macro show_books(id, name, Author, Editor) %}
+{% macro show_books(id, name, Author, Editor, group) %}
     <tr>
         <td> {{ id }} </td>
         <td>{{ name }}</td>
         <td>{{ Author }}</td>
         <td>{{ Editor }}</td>
+        {%if group == "admin"%}
         <td>
             <div class = "grid text-center" style="display:flex;flex-direction: row">
                 <form action="/modify/{{id}}" method="get" style = "margin-right:5%;">
@@ -14,5 +15,6 @@
                 </form>
             </div>
         </td>
+        {%endif%}
     </tr>
 {% endmacro %}

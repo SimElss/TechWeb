@@ -1,9 +1,11 @@
 {% extends "index.html" %}
 
 {% block content %}
-<form action="/logout" method="post">
-  <button type="submit" class="btn btn-danger">Logout</button>
-</form> <br>
+<div style="position: absolute; top: 10px; right: 10px;">
+    <form action="/logout" method="post">
+      <button class="btn btn-danger" type="submit">Logout</button>
+    </form>
+</div> <br>
 <form action="/save" method="post" class = "container">
     <h1 class = "display-6 text-center">Ajouter un nouveau livre</h1><br>
 

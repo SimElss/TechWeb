@@ -2,9 +2,11 @@
 {% from "book_macro.html" import show_books %}
 
 {% block content %}
-<form action="/logout" method="post">
-    <button type="submit" class="btn btn-danger">Logout</button>
-</form>  
+<div style="position: absolute; top: 10px; right: 10px;">
+    <form action="/logout" method="post">
+      <button class="btn btn-danger" type="submit">Logout</button>
+    </form>
+</div><br> 
 {%if current_user.group == "admin"%}
 <ul class="nav nav-tabs justify-content-center">
     <li class="nav-item">
@@ -24,18 +26,22 @@
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
+            {%if current_user.group == "admin"%}
             <th>Actions</th>
+            {%endif%}
             
         </tr>
         {% for book in books %}
-            {{ show_books(book.id, book.name, book.Author, book.Editor) }}
+            {{ show_books(book.id, book.name, book.Author, book.Editor, current_user.group) }}
             
         {% endfor %}
         <th colspan="4">Nombres de livres : {{Nombre}}</th>
         
     </table>
+    {%if current_user.group == "admin"%}
     <div class="grid text-center" style="margin-bottom: 5%;">
         <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>    
     </div>
+    {%endif%}
 </div>
 {% endblock %}

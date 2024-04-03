@@ -1,9 +1,11 @@
 {%extends "index.html"%}
 <!-- Peut voir tous les utilisateurs, les bloquer/débloquer ou les promouvoir admins-->
 {% block content %}
-<form action="/logout" method="post">
-    <button type="submit" class="btn btn-danger">Logout</button>
-</form>  
+<div style="position: absolute; top: 10px; right: 10px;">
+    <form action="/logout" method="post">
+      <button class="btn btn-danger" type="submit">Logout</button>
+    </form>
+</div>
 <ul class="nav nav-tabs justify-content-center">
     <li class="nav-item">
       <a class="nav-link link-body-emphasis" href="/liste">Home</a>

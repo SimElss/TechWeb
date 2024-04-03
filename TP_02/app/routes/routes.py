@@ -63,7 +63,7 @@ def modify(request : Request, id: str, user: UserSchema = Depends(login_manager.
     books = get_all_books()
     return templates.TemplateResponse(
         "modify.html", 
-        context={'request': request, 'books':books, 'Nombre':nb, 'current_user': user, 'book': book}
+        context={'request': request, 'books':books, 'Nombre':nb, 'book': book}
     )
 
 @router.post("/modify/{id}")
