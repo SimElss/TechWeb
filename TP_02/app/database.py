@@ -1,5 +1,8 @@
 from uuid import uuid4
 
+#"Database" of the app : contains 2 dictionaries -> the books and the users
+#In users : 1 client and 1 admin available to test app correctly
+#Later replace by real database -> SQLAlchemy
 
 database = {
     "books": [

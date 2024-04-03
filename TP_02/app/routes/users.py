@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from ..services.users import get_user_by_username, add_user, get_all_users, get_user_by_id, set_user_group, set_user_whitelist, get_user_by_email
+from ..services.users import add_user, get_all_users, get_user_by_id, set_user_group, set_user_whitelist, get_user_by_email
 from fastapi import HTTPException, status, Depends, Form
 from fastapi.responses import JSONResponse
 from ..login_manager import login_manager
@@ -82,11 +82,11 @@ def register_route(
     if user is not None:
         error=status.HTTP_409_CONFLICT
         description=f"Erreur {error} : Email déjà utilisé."
-        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/register", status_code=302)
     if password != password_confirm:
         error=status.HTTP_400_BAD_REQUEST
         description=f"Erreur {error} : Les mots de passe ne correspondent pas."
-        return RedirectResponse(url=f"/error/{description}", status_code=302)
+        return RedirectResponse(url=f"/error/{description}/register", status_code=302)
     add_user({
         "id": str(uuid4()),
         "username": username,
@@ -94,7 +94,7 @@ def register_route(
         "surname": surname,
         "password": password,
         "email": email,
-        "group":"user",
+        "group":"client",
         "whitelist": True
     })
     success_message = f"Utilisateur {username} ajouté avec succès !"
@@ -139,7 +139,7 @@ def promotion(user_id: str, user: UserSchema = Depends(login_manager)):
         return RedirectResponse(url="/liste", status_code=302)
 
 @user_router.post('/block/{user_id}')
-def block(user_id: str, user: UserSchema = Depends(login_manager)):
+def block(user_id: str):
     affected_user = get_user_by_id(user_id)
     if affected_user is None:
         error=status.HTTP_404_NOT_FOUND
