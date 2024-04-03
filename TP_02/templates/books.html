@@ -1,47 +1,63 @@
-{% extends "index.html"%}
+{% extends "index.html" %}
 {% from "book_macro.html" import show_books %}
-
 {% block content %}
-<div style="position: absolute; top: 10px; right: 10px;">
-    <form action="/logout" method="post">
-      <button class="btn btn-danger" type="submit">Logout</button>
-    </form>
-</div><br> 
-{%if current_user.group == "admin"%}
-<ul class="nav nav-tabs justify-content-center">
-    <li class="nav-item">
+
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+<!-- Navigation tabs -->
+{% if current_user.group == "admin" %}
+<!-- Check if the current user is an admin -->
+    <li class="nav-item" style="margin-left: auto;">
       <a class="nav-link active" href="/liste">Home</a>
+      <!-- Link to home page -->
     </li>
-    <li class = "nav-item">
-        <a class = "nav-link link-body-emphasis" href="/administration">Admin</a>
+    <li class="nav-item">
+        <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+        <!-- Link to admin page -->
+    </li>
+    <br> 
+    <!-- Line break -->
+{% endif %}
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post" >
+            <button class="btn btn-danger" type="submit" >Logout</button>
+            <!-- Logout button -->
+        </form>
     </li>
 </ul>
-<br> 
-{%endif%}
 
 <div class="container">
+<!-- Container for book list -->
+
     <table class="table table-hover">
+    <!-- Table to display books -->
         <tr>
             <th>Id</th>
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
-            {%if current_user.group == "admin"%}
+            {% if current_user.group == "admin" %}
+            <!-- Check if the current user is an admin -->
             <th>Actions</th>
-            {%endif%}
-            
+            <!-- Table header for actions -->
+            {% endif %}
         </tr>
         {% for book in books %}
+        <!-- Loop through each book -->
             {{ show_books(book.id, book.name, book.Author, book.Editor, current_user.group) }}
-            
+            <!-- Use the show_books macro to display book information -->
         {% endfor %}
-        <th colspan="4">Nombres de livres : {{Nombre}}</th>
-        
+
+        <th colspan="4">Nombres de livres : {{ Nombre }}</th>
+        <!-- Table row for the number of books -->
+
     </table>
-    {%if current_user.group == "admin"%}
+    {% if current_user.group == "admin" %}
+    <!-- Check if the current user is an admin -->
     <div class="grid text-center" style="margin-bottom: 5%;">
         <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>    
+        <!-- Button to add a new book -->
     </div>
-    {%endif%}
+    {% endif %}
+
 </div>
 {% endblock %}

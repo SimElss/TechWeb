@@ -1,41 +1,45 @@
 {% extends "index.html" %}
 {% from "book_macro.html" import show_books %}
-
 {% block content %}
+
 <div style="position: absolute; top: 10px; right: 10px;">
+    <!-- Logout button -->
     <form action="/logout" method="post">
-      <button class="btn btn-danger" type="submit">Logout</button>
+        <!-- Logout form -->
+        <button class="btn btn-danger" type="submit">Logout</button>
+        <!-- Logout button -->
     </form>
 </div><br>
 
 <div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
-    <h2 class = "display-6 text-center">Modifier le livre</h2><br>
+    <!-- Container for modifying book -->
+    <h2 class="display-6 text-center">Modifier le livre</h2><br>
+    <!-- Title for modifying book section -->
     <form action="/modify/{{book.id}}" method="post">
+        <!-- Form for modifying book -->
         <div class="input-group mb-3">
+            <!-- Form group for book name -->
             <label for="book_name" class="input-group-text">Nom</label>
-            <input type="text"  id="book_name" class="form-control"
-                name="name" value="{{book.name}}" required="true"/>
+            <input type="text" id="book_name" class="form-control" name="name" value="{{book.name}}" required="true"/>
         </div>
-
         <div class="input-group mb-3">
+            <!-- Form group for book author -->
             <label for="book_author" class="input-group-text">Auteur</label>
-            <input type="text" id="book_auhtor" class="form-control"
-                name="Author" required="true" value="{{book.Author}}"/>
+            <input type="text" id="book_author" class="form-control" name="Author" required="true" value="{{book.Author}}"/>
         </div>
-
+        <!-- End of book author form group -->
         <div class="input-group mb-3">
+            <!-- Form group for book editor -->
             <label for="book_editor" class="input-group-text">Editeur</label>
-            <input type="text" id="book_editor" class="form-control"
-                name="Editor" value="{{book.Editor}}"/>
+            <input type="text" id="book_editor" class="form-control" name="Editor" value="{{book.Editor}}"/>
         </div>
+        <!-- End of book editor form group -->
         <div class="grid text-center">
+            <!-- Button group -->
             <a href="/liste"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
             <button type="submit" class="btn btn-outline-dark">Confirmer</button>
         </div>
-
     </form>
-
-   
 </div>
 
 {% endblock %}

@@ -1,20 +1,28 @@
 {% macro show_books(id, name, Author, Editor, group) %}
+<!-- Define a macro named show_books with parameters for book information -->
     <tr>
+    <!-- Start a table row -->
         <td> {{ id }} </td>
         <td>{{ name }}</td>
         <td>{{ Author }}</td>
         <td>{{ Editor }}</td>
-        {%if group == "admin"%}
+        {% if group == "admin" %}
         <td>
-            <div class = "grid text-center" style="display:flex;flex-direction: row">
-                <form action="/modify/{{id}}" method="get" style = "margin-right:5%;">
+        <!-- Start a table data cell for actions -->
+            <div class="grid text-center" style="display:flex;flex-direction: row">
+            <!-- Create a grid layout for buttons -->
+                <form action="/modify/{{id}}" method="get" style="margin-right:5%;">
+                <!-- Form to modify book -->
                     <button type="submit" id="button_submit"></button>
+                    <!-- Submit button for modification -->
                 </form>
-                <form action="/delete/{{id}}" method="post" style = "margin-right:5%;">
-                    <button type="submit" id = "button_submit2"></button>
+                <form action="/delete/{{id}}" method="post" style="margin-right:5%;">
+                <!-- Form to delete book -->
+                    <button type="submit" id="button_submit2"></button>
+                    <!-- Submit button for deletion -->
                 </form>
             </div>
         </td>
-        {%endif%}
+        {% endif %}
     </tr>
 {% endmacro %}

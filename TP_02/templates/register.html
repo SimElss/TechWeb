@@ -1,37 +1,47 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 {% block content %}
 <div class="container">
+    <!-- Container for registration form -->
     <div class="row justify-content-center">
         <div class="col-4">
             <h2 class="text-center">Inscription</h2>
             <form action="/register" method="post">
+                <!-- Form for registration -->
                 <div class="mb-3">
+                    <!-- Form group for username -->
                     <label for="username" class="form-label">Nom d'utilisateur</label>
                     <input type="text" class="form-control" id="username" name="username" required>
+                    <!-- Input field for username -->
                 </div>
                 <div class="mb-3">
+                    <!-- Form group for name -->
                     <label for="name" class="form-label">Nom</label>
                     <input type="text" class="form-control" id="name" name="name" required>
                 </div>
                 <div class="mb-3">
+                    <!-- Form group for surname -->
                     <label for="surname" class="form-label">Prénom</label>
                     <input type="text" class="form-control" id="surname" name="surname" required>
                 </div>
                 <div class="mb-3">
+                    <!-- Form group for email -->
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
                 <div class="mb-3">
+                    <!-- Form group for password -->
                     <label for="password" class="form-label">Mot de passe</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <div class="mb-3">
+                    <!-- Form group for password confirmation -->
                     <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
                     <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
                 </div>
                 <button type="submit" class="btn btn-primary">S'inscrire</button>
+                <!-- Submit button for registration form -->
             </form>
-            <p class="text-center">Déjà un compte ? <a href="/login">Connectez-vous</a></p>
+            <p class="text-center">Déjà un compte ?<a href="/login">Connectez-vous</a></p>
         </div>
     </div>
 </div>

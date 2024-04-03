@@ -8,93 +8,104 @@ from fastapi import APIRouter, status, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+# Create APIRouter instance for book-related routes
 router = APIRouter()
+
+# Setup Jinja2Templates for HTML rendering
 templates = Jinja2Templates(directory="templates")
 
-
+# Route for redirecting to login page on root access
 @router.get("/")
 def home():
     return RedirectResponse(url="/login", status_code=302)
 
+# Temporary route to handle user session management
 @router.get("/tmp")
-def tmp(request : Request, user: UserSchema = Depends(login_manager.optional)):
+def tmp(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     else:
         return RedirectResponse(url="/liste", status_code=302)
 
+# Route to display error message
 @router.get("/error/{description}/{url}")
-def error(request : Request, description: str, url: str):
+def error(request: Request, description: str, url: str):
     return templates.TemplateResponse(
         "error.html", 
-        context={'request':request, 'description': description, 'url': url}
+        context={'request': request, 'description': description, 'url': url}
     )
 
+# Route to display list of books
 @router.get("/liste")
-def list_books(request : Request, user: UserSchema = Depends(login_manager.optional)):
+def list_books(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
         "books.html", 
-        context={'request':request,'books': books, 'Nombre':nb, 'current_user': user}
+        context={'request': request,'books': books, 'Nombre': nb, 'current_user': user}
     )
 
+# Route to delete a book
 @router.post("/delete/{id}")
 def delete(id: str):
     response = delete_book(id)
     if response is None:
         error = status.HTTP_404_NOT_FOUND
-        description = f"Error {error} : pas de livre trouvé avec cet ID"
+        description = f"Error {error} : No book found with this ID"
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
+# Route to modify a book
 @router.get("/modify/{id}")
-def modify(request : Request, id: str, user: UserSchema = Depends(login_manager.optional)):
+def modify(request: Request, id: str, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     if user.group != "admin":
-        error=status.HTTP_403_FORBIDDEN
-        description=f"Erreur {error} : Accès interdit."
+        error = status.HTTP_403_FORBIDDEN
+        description = f"Error {error}: Access forbidden."
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     book = get_book_by_id(id)
     nb = get_number_books()
     books = get_all_books()
     return templates.TemplateResponse(
         "modify.html", 
-        context={'request': request, 'books':books, 'Nombre':nb, 'book': book}
+        context={'request': request, 'books': books, 'Nombre': nb, 'book': book}
     )
 
+# Route to modify a book (POST request)
 @router.post("/modify/{id}")
-def modify(id:str, name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[Optional[str], Form()] = None):
+def modify(id: str, name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[Optional[str], Form()] = None):
     if Editor == None:
         Editor = ""
     response = modify_book(id, name, Author, Editor)
     if response is None:
         error = status.HTTP_404_NOT_FOUND
-        description = f"Erreur {error} : Informations invalides données."
+        description = f"Error {error}: Invalid information provided."
         return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
     if response == 1:
         error = status.HTTP_404_NOT_FOUND
-        description = f"Erreur {error} : pas de livre trouvé avec cet ID"
+        description = f"Error {error}: No book found with this ID"
         return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
+# Route to add a new book
 @router.get("/save")
-def save(request : Request, user: UserSchema = Depends(login_manager.optional)):
+def save(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     if user.group != "admin":
-        error=status.HTTP_403_FORBIDDEN
-        description=f"Erreur {error} : Accès interdit."
+        error = status.HTTP_403_FORBIDDEN
+        description = f"Error {error}: Access forbidden."
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     nb = get_number_books()
     return templates.TemplateResponse(
         "save_book.html", 
-        context={'request': request, 'Nombre':nb, 'current_user': user}
+        context={'request': request, 'Nombre': nb, 'current_user': user}
     )
 
+# Route to add a new book (POST request)
 @router.post("/save")
 def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: Annotated[Optional[str], Form()] = None):
     if Editor == None:
@@ -107,6 +118,6 @@ def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: A
         })
     if new_book is None:
         error = status.HTTP_404_NOT_FOUND
-        description = f"Erreur {error} : Informations invalides données."
+        description = f"Error {error}: Invalid information provided."
         return RedirectResponse(url=f"/error/{description}/save", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)

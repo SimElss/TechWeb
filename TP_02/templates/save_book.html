@@ -1,38 +1,43 @@
 {% extends "index.html" %}
-
 {% block content %}
+
 <div style="position: absolute; top: 10px; right: 10px;">
+    <!-- Logout button -->
     <form action="/logout" method="post">
-      <button class="btn btn-danger" type="submit">Logout</button>
+        <button class="btn btn-danger" type="submit">Logout</button>
     </form>
 </div> <br>
-<form action="/save" method="post" class = "container">
-    <h1 class = "display-6 text-center">Ajouter un nouveau livre</h1><br>
+
+<form action="/save" method="post" class="container">
+    <!-- Form for adding a new book -->
+    <h1 class="display-6 text-center">Ajouter un nouveau livre</h1><br>
 
     <div class="input-group mb-3">
+        <!-- Form group for book name -->
         <label for="book_name" class="input-group-text">Nom du livre</label>
-        <input type="text"  id="book_name" class="form-control"
+        <input type="text" id="book_name" class="form-control"
                name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
     </div>
 
     <div class="input-group mb-3">
+        <!-- Form group for book author -->
         <label for="book_author" class="input-group-text">Auteur</label>
         <input type="text" id="book_author" class="form-control"
                name="Author" required="true" placeholder="Rick Riordan"/>
     </div>
 
     <div class="input-group mb-3">
+        <!-- Form group for book editor -->
         <label for="book_editor" class="input-group-text">Editeur</label>
         <input type="text" id="book_editor" class="form-control"
                name="Editor" placeholder="LPG"/>
-    </div><br>
-    
+    </div>
+    <br>
     <div class="d-flex justify-content-between">
-        <a href="/liste"><button type="button" class="btn btn-outline-dark" > Annuler </button></a>
-        <button type="submit" class="btn btn-outline-dark">Confirmer</button>  
+        <!-- Container for buttons -->
+        <a href="/liste"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
+        <button type="submit" class="btn btn-outline-dark">Confirmer</button>
         <h5> Nombres de livres : {{Nombre}} </h5>      
-
     </div>    
 </form>
-
 {% endblock %}
