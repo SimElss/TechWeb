@@ -7,6 +7,7 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
+from app.database import create_database
 
 
 #Structure of the app
@@ -40,3 +41,7 @@ def custom_validation_error_redirection(request : Request, exception: Validation
     return RedirectResponse(
         url=f"/error/{description}/register", status_code=302
     )
+
+@app.on_event("startup")
+def on_application_started():
+    create_database()

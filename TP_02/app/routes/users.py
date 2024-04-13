@@ -9,6 +9,7 @@ from ..schemas.users import UserSchema
 from typing import Annotated
 from uuid import uuid4
 from ..database import database
+from ..hash import bcrypt_context
 
 # Define APIRouter instance for user routes
 user_router = APIRouter()
@@ -32,6 +33,7 @@ def login_route(
 ):
     # Check if user exists and password matches
     user = get_user_by_email(email)
+    password = bcrypt_context.hash(password)
     if user is None or user.password != password:
         error = status.HTTP_401_UNAUTHORIZED
         description = f"Error {error}: Incorrect username or password."
