@@ -20,3 +20,8 @@ class UserSchema(BaseModel):
         if not has_capital:
             raise ValueError("""Le mot de passe doit contenir au moins une majuscule, un nombre, un caractère spéciale et faire plus de 8 caractères""")
         return value
+    
+class Token(BaseModel):
+    acces_token: str
+    token_type: str
+    

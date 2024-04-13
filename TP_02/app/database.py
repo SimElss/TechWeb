@@ -1,10 +1,32 @@
 from uuid import uuid4
 
-#"Database" of the app : contains 2 dictionaries -> the books and the users
-#In users : 1 client and 1 admin available to test app correctly
-#Later replace by real database -> SQLAlchemy
+from datetime import date
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-database = {
+engine = create_engine(
+    "sqlite:///data/db.sqlite",  # Path to the database file
+    echo=True,  # Show generated SQL code in the terminal
+)
+Session = sessionmaker(engine)
+
+
+class Base(DeclarativeBase):
+    pass
+
+from models.users import Users, Admins
+from models.books import Books
+
+
+def create_database():
+    Base.metadata.create_all(engine)
+
+
+def delete_database():
+    Base.metadata.clear()
+
+
+'''database = {
     "books": [
         {
             "id": str(uuid4()),
@@ -52,3 +74,6 @@ database = {
     ]
 
 }
+'''
+
+
