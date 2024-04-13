@@ -111,12 +111,15 @@ def register_route(
 # Route for administration page
 @user_router.get('/administration')
 def administration(request: Request, user: UserSchema = Depends(login_manager)):
+    #Check if user is connected
     if user is None :
         return RedirectResponse(url="/login", status_code=302)
+    #check if user is admin
     if user.group != "admin":
         error = status.HTTP_403_FORBIDDEN
         description = f"Error {error}: Access forbidden."
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
+    #check if user isn't blocked
     if user.whitelist != True:
         error = status.HTTP_403_FORBIDDEN
         description = f"Error {error}: User blocked."
@@ -132,15 +135,20 @@ def administration(request: Request, user: UserSchema = Depends(login_manager)):
 # Route for promoting/demoting users
 @user_router.post('/promote/{user_id}')
 def promotion(user_id: str, user: UserSchema = Depends(login_manager)):
+    #affected_user = the user we promote
     affected_user = get_user_by_id(user_id)
+
+    #verify if id is good
     if affected_user is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: User not found."
         return RedirectResponse(url=f"/error/{description}/administration", status_code=302)
+    #check group of user and then change it
     if affected_user.group == "admin":
         set_user_group(user_id, "client")
     else:
         set_user_group(user_id, "admin")
+    #redirect different route if user is either admin or client
     if user.group == "admin":
         return RedirectResponse(url="/administration", status_code=302)
     else:
@@ -150,10 +158,12 @@ def promotion(user_id: str, user: UserSchema = Depends(login_manager)):
 @user_router.post('/block/{user_id}')
 def block(user_id: str):
     affected_user = get_user_by_id(user_id)
+    #verify if id is good
     if affected_user is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: User not found."
         return RedirectResponse(url=f"/error/{description}/administration", status_code=302)
+    #check if user is blocked and change it
     if affected_user.whitelist == True:
         set_user_whitelist(user_id, False)
     else:

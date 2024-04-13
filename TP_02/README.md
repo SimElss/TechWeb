@@ -3,7 +3,7 @@
 Notre application gère une bibliothèque de livres stockés dans un dictionnaire. On peut ajouter, supprimer, modifier, lister et récupèrer le nombre de livres dans le dictionnaires à l'aide des différentes fonctions définies dans le fichier book.py du dossier services. Ces différentes fonctionalités sont accessibles depuis des pages html interractives. Elles peuvent également être testées via la route "/docs". En cas d'erreur l'utilisateur est redirigée vers une page dédiée contenant la description et le code d'erreur. Toutes les pages sont accessibles depuis la route "/liste" ou via l'url.
 
 Lorsque l'on démarre l'application nous tombons sur la page de login : il existe un compte de base dont l'adresse mail est admin@juice-sh.op dont le mot de passe est Admin!123.
-Si l'on veut s'enregistrer en tant qu'administrateur il faut se faire grader par un autre admin ou le faire à l main en modifiant l'attribut groupe de la liste des users dans le fichier database.py
+Si l'on veut s'enregistrer en tant qu'administrateur il faut se faire grader par un autre admin ou le faire à la main en modifiant l'attribut groupe de la liste des users dans le fichier database.py.
 
 ## Routes
 

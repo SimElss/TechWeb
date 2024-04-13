@@ -62,6 +62,7 @@ def delete(id: str):
 def modify(request: Request, id: str, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
+    #check if user is admin -> only admin can modify book
     if user.group != "admin":
         error = status.HTTP_403_FORBIDDEN
         description = f"Error {error}: Access forbidden."
@@ -80,10 +81,12 @@ def modify(id: str, name: Annotated[str, Form()], Author: Annotated[str, Form()]
     if Editor == None:
         Editor = ""
     response = modify_book(id, name, Author, Editor)
+    #if None user had just enter spaces in one of the field (not optional one)
     if response is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: Invalid information provided."
         return RedirectResponse(url=f"/error/{description}/modify", status_code=302)
+    #Check if the id is valid
     if response == 1:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: No book found with this ID"
@@ -95,6 +98,7 @@ def modify(id: str, name: Annotated[str, Form()], Author: Annotated[str, Form()]
 def save(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
+    # check if user is admin -> only admin can modify book
     if user.group != "admin":
         error = status.HTTP_403_FORBIDDEN
         description = f"Error {error}: Access forbidden."
@@ -116,6 +120,7 @@ def save(name: Annotated[str, Form()], Author: Annotated[str, Form()], Editor: A
         "Author" : Author,
         "Editor": Editor,
         })
+    #if None user had just enter spaces in one of the field (not optional one)
     if new_book is None:
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: Invalid information provided."
