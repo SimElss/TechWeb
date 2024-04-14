@@ -1,8 +1,10 @@
 from ..schemas.books import Book
-from ..database import database
+from ..database import Session
+from ..models.models import Books
+from sqlalchemy import select, update, delete, func
 
 
-def save_books(new_book: Book) -> Book:
+def save_books(new_book: Book):
     """
     This function is used to save books
 
@@ -15,24 +17,34 @@ def save_books(new_book: Book) -> Book:
     None : If informations ar invalid (NoneTypeObject)
     new_book : the book saved  (Object Book)
     """
-    #We strip if a user includes tab or space at the end or the begining not on purpose 
-    new_book["id"] = new_book["id"].strip('\t')
-    new_book["id"]= new_book["id"].strip(" ")
-    new_book["name"]= new_book["name"].strip('\t')
-    new_book["name"]= new_book["name"].strip(" ")
-    new_book["Author"]= new_book["Author"].strip('\t')
-    new_book["Author"]= new_book["Author"].strip(" ")
+    with Session() as session:
+        #We strip if a user includes tab or space at the end or the begining not on purpose 
+        new_book.id = new_book.id.strip('\t')
+        new_book.id= new_book.id.strip(" ")
+        new_book.name= new_book.name.strip('\t')
+        new_book.name= new_book.name.strip(" ")
+        new_book.Author= new_book.Author.strip('\t')
+        new_book.Author= new_book.Author.strip(" ")
 
-    #Check if Editor has a value (cause optionam)
-    if new_book["Editor"] != None:
-        new_book["Editor"]= new_book["Editor"].strip('\t')
-        new_book["Editor"]= new_book["Editor"].strip(" ")
+        #Check if Editor has a value (cause optionam)
+        if new_book.Editor != None:
+            new_book.Editor= new_book.Editor.strip('\t')
+            new_book.Editor= new_book.Editor.strip(" ")
 
-    #Check if informations are valid
-    if new_book["id"] == "" or new_book["name"] == "" or new_book["Author"] == "":
-        return None
-    database["books"].append(new_book) #add book to database
-    return new_book
+        #Check if informations are valid
+        if new_book.id == "" or new_book.name == "" or new_book.Author == "":
+            return None
+        
+        #On remplit le modèle
+        new_book_entity = Books(
+            id=new_book.id,
+            name=new_book.name,
+            Author = new_book.Author, 
+            Editor = new_book.Editor
+        )
+        session.add(new_book_entity)#add book to database
+        session.commit()
+        return True
 
 def get_book_by_id(id: str):
     """"
@@ -47,9 +59,16 @@ def get_book_by_id(id: str):
     Book.model_validate(book) : the found book (Object Book)
     None : If no book has benn found (NoneTypeObject)
     """
-    for book in database['books']:
-        if book['id'] == id:
-            return Book.model_validate(book)
+    with Session() as session:
+        statement = select(Books).filter_by(id=id)
+        book = session.scalar(statement) 
+        if book is not None:
+            return Book(
+                id=book.id,
+                name=book.name,
+                Author=book.Author,
+                Editor=book.Editor,
+            )
     return None
 
 def get_all_books() -> list[Book]:
@@ -60,9 +79,19 @@ def get_all_books() -> list[Book]:
     --------
     books_data : teh list of books (list of Object Book)
     """
-    #Uqing key books to retrieve list of books
-    books_data = database["books"]
-    return books_data
+    with Session() as session:
+        statement = select(Books) #Model Book
+        books_data = session.scalars(statement).unique().all()
+        #Schema Books
+        return [
+            Book(
+                id=book.id,
+                name=book.name,
+                Author=book.Author,
+                Editor=book.Editor,
+            )
+            for book in books_data
+        ]
 
 
 def delete_book(book_id: str) -> None:
@@ -78,11 +107,14 @@ def delete_book(book_id: str) -> None:
     1 : to check if the book has been deleted (int)
     None : if we find no book corresponding to the id (NoneTypeObject)
     """
-    for index, book in enumerate(database["books"]):
-        book_id = book_id.strip('\t')
-        if book["id"] == book_id.strip(" "):
-            database["books"].pop(index)
-            return 1
+    book_id = book_id.strip(" ")
+    book_id = book_id.strip('\t')
+    with Session() as session:
+         statement = select(Books).filter_by(id=book_id)
+         book = session.scalars(statement)
+         if book is not None:
+            session.delete(book)
+            session.commit()
     return None
 
 def modify_book(book_id: str, name:str, Author:str, Editor:str):
@@ -108,15 +140,18 @@ def modify_book(book_id: str, name:str, Author:str, Editor:str):
     Author = Author.strip('\t')
     if name == "" or Author == "":
                 return None
-    for index, book in enumerate(database["books"]):
-        if book["id"] == book_id:
-            book["name"]= name
-            book["Author"]= Author
-            if Editor != None:
+    if Editor != None:
                 Editor = Editor.strip(" ")
                 Editor = Editor.strip('\t')
-            book["Editor"]= Editor
-            return 0
+    with Session() as session:
+        statement = select(Books).filter_by(id=book_id)
+        book = session.scalars(statement)
+        if book is not None:
+             book.name=name
+             book.Author=Author
+             book.Editor=Editor
+             session.commit()
+             return 0
     return 1
 
 def get_number_books() -> int:
@@ -125,8 +160,10 @@ def get_number_books() -> int:
 
     Return :
     --------
-    len(database["books"]) : the number of books (int) 
+    count : the number of books (int) 
     """
-    return len(database["books"])
+    with Session() as session:
+        count = session.query(func.count()).select_from(Books).scalar()
+        return count
 
     

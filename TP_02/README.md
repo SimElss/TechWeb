@@ -38,4 +38,4 @@ pip install -r requirements.txt
 
 ### Démarrer l'application
 
-python Main.py
+python main.py

@@ -1,5 +1,4 @@
 from pydantic import BaseModel, field_validator
-from pydantic.fields import Field
 
 #Schema of users -> we don't use password_confirm in it it's verified in services
 class UserSchema(BaseModel):
@@ -9,7 +8,7 @@ class UserSchema(BaseModel):
     surname: str
     password: str
     email: str
-    group: str # admin or client
+    group: str
     whitelist: bool # Blocked or not
 
     #Custome rule for password
@@ -21,7 +20,4 @@ class UserSchema(BaseModel):
             raise ValueError("""Le mot de passe doit contenir au moins une majuscule, un nombre, un caractère spéciale et faire plus de 8 caractères""")
         return value
     
-class Token(BaseModel):
-    acces_token: str
-    token_type: str
     

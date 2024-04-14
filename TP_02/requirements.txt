@@ -2,7 +2,6 @@ fastapi
 uvicorn[standard]
 jinja2
 fastapi_login
-sqlalchemy
-python-jose[cryptography]
+SQLAlchemy
 python-multipart
 sqlalchemy.orm

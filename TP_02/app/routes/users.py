@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from ..services.users import add_user, get_all_users, get_user_by_id, set_user_group, set_user_whitelist, get_user_by_email
-from fastapi import HTTPException, status, Depends, Form
-from fastapi.responses import JSONResponse
+from fastapi import status, Depends, Form
 from ..login_manager import login_manager
 from fastapi.responses import RedirectResponse
 from ..schemas.users import UserSchema
 from typing import Annotated
 from uuid import uuid4
-from ..database import database
-from ..hash import bcrypt_context
+import hashlib
+
 
 # Define APIRouter instance for user routes
 user_router = APIRouter()
@@ -33,8 +32,10 @@ def login_route(
 ):
     # Check if user exists and password matches
     user = get_user_by_email(email)
-    password = bcrypt_context.hash(password)
-    if user is None or user.password != password:
+    #We hash the password and verify if the hash corresponds to the hashed password stored in database
+    encoded_password = password.encode()
+    hashed_password = hashlib.sha3_256(encoded_password).hexdigest()
+    if user is None or user.password != hashed_password:
         error = status.HTTP_401_UNAUTHORIZED
         description = f"Error {error}: Incorrect username or password."
         return RedirectResponse(url=f"/error/{description}/login", status_code=302)
@@ -92,14 +93,16 @@ def register_route(
         error = status.HTTP_400_BAD_REQUEST
         description = f"Error {error}: Passwords do not match."
         return RedirectResponse(url=f"/error/{description}/register", status_code=302)
-    
+    #We encode the password using sha3_256
+    encoded_password = password.encode()
+    hashed_password = hashlib.sha3_256(encoded_password).hexdigest()
     # Add user to database
     add_user({
         "id": str(uuid4()),
         "username": username,
         "name": name,
         "surname": surname,
-        "password": password,
+        "password": hashed_password,
         "email": email,
         "group":"client",
         "whitelist": True

@@ -1,6 +1,3 @@
-from uuid import uuid4
-
-from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
@@ -14,9 +11,7 @@ Session = sessionmaker(engine)
 class Base(DeclarativeBase):
     pass
 
-from models.users import Users, Admins
-from models.books import Books
-
+from app.models.models import Users, Books, Admins
 
 def create_database():
     Base.metadata.create_all(engine)
