@@ -1,15 +1,14 @@
 {% extends "index.html" %}
 {% from "book_macro.html" import show_books %}
 {% block content %}
-
-<div style="position: absolute; top: 10px; right: 10px;">
-    <!-- Logout button -->
-    <form action="/logout" method="post">
-        <!-- Logout form -->
-        <button class="btn btn-danger" type="submit">Logout</button>
-        <!-- Logout button -->
-    </form>
-</div><br>
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post" >
+            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
+            <!-- Logout button -->
+        </form>
+    </li>
+</ul><br>
 
 <div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
     <!-- Container for modifying book -->
@@ -31,7 +30,16 @@
         <div class="input-group mb-3">
             <!-- Form group for book editor -->
             <label for="book_editor" class="input-group-text">Editeur</label>
+            {%if book.Editor != None%}
             <input type="text" id="book_editor" class="form-control" name="Editor" value="{{book.Editor}}"/>
+            {%else%}
+            <input type="text" id="book_editor" class="form-control" name="Editor" value=""/>
+            {%endif%}
+        </div>
+        <div class="input-group mb-3">
+            <!-- Form group for book author -->
+            <label for="book_price" class="input-group-text">Prix</label>
+            <input type="number" id="book_price" class="form-control" name="price" required="true" value="{{book.price}}" min="0"/>
         </div>
         <!-- End of book editor form group -->
         <div class="grid text-center">

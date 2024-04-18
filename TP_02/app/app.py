@@ -6,7 +6,8 @@ from pydantic import ValidationError
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from app.database import create_database
+from app.database import create_database, initialiser_db, delete_database, vider_db
+from app.errors import ChangeMdpError
 
 
 #Structure of the app
@@ -41,6 +42,27 @@ def custom_validation_error_redirection(request : Request, exception: Validation
         url=f"/error/{description}/register", status_code=302
     )
 
+#Get any error relative to change password
+@app.exception_handler(ChangeMdpError)
+def custom_change_mdp_error_redirection(request : Request, exception: ChangeMdpError):
+    error = status.HTTP_422_UNPROCESSABLE_ENTITY
+    description = f"Erreur {error} : {exception}"
+    #redirect to new_mdp page
+    return RedirectResponse(
+        url=f"/error/{description}/new_mdp", status_code=302
+    )
+
 @app.on_event("startup")
 def on_application_started():
+    print("Good Morning World !")
     create_database()
+    initialiser_db()
+
+@app.on_event("shutdown")
+def shutdown_event():
+    delete_database()
+    vider_db()
+
+def handle_exit(*args):
+    shutdown_event()
+    print("Goodbye World !")

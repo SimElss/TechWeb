@@ -20,4 +20,8 @@ class UserSchema(BaseModel):
             raise ValueError("""Le mot de passe doit contenir au moins une majuscule, un nombre, un caractère spéciale et faire plus de 8 caractères""")
         return value
     
+class AdminSchema(BaseModel):
+    id:int
+    user_id:str
+    
     

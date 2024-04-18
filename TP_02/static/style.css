@@ -1,5 +1,5 @@
 #button_submit {
-    background-image: url('/static/crayon.jpg'); /* Remplacez chemin_de_votre_image_crayon.png par le chemin de votre image de crayon */
+    background-image: url('/static/crayon.png'); /* Remplacez chemin_de_votre_image_crayon.png par le chemin de votre image de crayon */
     background-size: contain; /* Ajuste la taille de l'image pour qu'elle s'adapte au bouton */
     background-repeat: no-repeat; /* Empêche l'image de se répéter */
     background-position: center; /* Centre l'image dans le bouton */
@@ -8,7 +8,6 @@
     border: none; /* Supprime les bordures du bouton */
     cursor: pointer; /* Change le curseur au survol du bouton */
     text-indent: -9999px; /* Cache le texte du bouton */
-    /* Vous pouvez ajouter d'autres styles CSS selon vos besoins */
   }
 
   #button_submit2 {
@@ -21,5 +20,16 @@
     border: none; /* Supprime les bordures du bouton */
     cursor: pointer; /* Change le curseur au survol du bouton */
     text-indent: -9999px; /* Cache le texte du bouton */
-    /* Vous pouvez ajouter d'autres styles CSS selon vos besoins */
+  }
+
+  #button_submit3 {
+    background-image: url('/static/dollar.png'); /* Remplacez chemin_de_votre_image_crayon.png par le chemin de votre image de crayon */
+    background-size: contain; /* Ajuste la taille de l'image pour qu'elle s'adapte au bouton */
+    background-repeat: no-repeat; /* Empêche l'image de se répéter */
+    background-position: center; /* Centre l'image dans le bouton */
+    width: 30px; /* Ajustez la largeur selon vos besoins */
+    height: 30px; /* Ajustez la hauteur selon vos besoins */
+    border: none; /* Supprime les bordures du bouton */
+    cursor: pointer; /* Change le curseur au survol du bouton */
+    text-indent: -9999px; /* Cache le texte du bouton */
   }

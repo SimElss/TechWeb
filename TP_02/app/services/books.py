@@ -1,10 +1,12 @@
+from sqlalchemy import select, func
+
+
 from ..schemas.books import Book
 from ..database import Session
-from ..models.models import Books
-from sqlalchemy import select, update, delete, func
+from ..models.models import Books, Users
 
 
-def save_books(new_book: Book):
+def save_books(new_book: Book, user_id: str):
     """
     This function is used to save books
 
@@ -40,9 +42,15 @@ def save_books(new_book: Book):
             id=new_book.id,
             name=new_book.name,
             Author = new_book.Author, 
-            Editor = new_book.Editor
+            Editor = new_book.Editor,
+            price = new_book.price,
+            bought = new_book.bought
         )
         session.add(new_book_entity)#add book to database
+
+        user = session.query(Users).filter_by(id=user_id).first()
+        user.book.append(new_book_entity)
+
         session.commit()
         return True
 
@@ -68,6 +76,8 @@ def get_book_by_id(id: str):
                 name=book.name,
                 Author=book.Author,
                 Editor=book.Editor,
+                price=book.price,
+                bought=book.bought
             )
     return None
 
@@ -89,6 +99,7 @@ def get_all_books() -> list[Book]:
                 name=book.name,
                 Author=book.Author,
                 Editor=book.Editor,
+                price=book.price,
             )
             for book in books_data
         ]
@@ -111,13 +122,14 @@ def delete_book(book_id: str) -> None:
     book_id = book_id.strip('\t')
     with Session() as session:
          statement = select(Books).filter_by(id=book_id)
-         book = session.scalars(statement)
+         book = session.scalar(statement)
          if book is not None:
             session.delete(book)
             session.commit()
+            return True
     return None
 
-def modify_book(book_id: str, name:str, Author:str, Editor:str):
+def modify_book(book_id: str, bought:bool, name:str = None, Author:str = None, Editor:str = None, price:float = None):
     """
     This function modifies a book
 
@@ -134,24 +146,35 @@ def modify_book(book_id: str, name:str, Author:str, Editor:str):
     0 : if book has been modified (int)
     1 : if no book has been find using book_id
     """
-    name = name.strip(" ")
-    name = name.strip('\t')
-    Author = Author.strip(" ")
-    Author = Author.strip('\t')
-    if name == "" or Author == "":
-                return None
-    if Editor != None:
-                Editor = Editor.strip(" ")
-                Editor = Editor.strip('\t')
-    with Session() as session:
-        statement = select(Books).filter_by(id=book_id)
-        book = session.scalars(statement)
-        if book is not None:
-             book.name=name
-             book.Author=Author
-             book.Editor=Editor
-             session.commit()
-             return 0
+    if name != None and Author != None and price != None:
+        name = name.strip(" ")
+        name = name.strip('\t')
+        Author = Author.strip(" ")
+        Author = Author.strip('\t')
+        if name == "" or Author == "":
+            return None
+        if Editor != None:
+            Editor = Editor.strip(" ")
+            Editor = Editor.strip('\t')
+        with Session() as session:
+            statement = select(Books).filter_by(id=book_id)
+            book = session.scalar(statement)
+            if book is not None:
+                book.name=name
+                book.Author=Author
+                book.Editor=Editor
+                book.price=price
+
+                session.commit()
+                return 0
+    else:
+        with Session() as session:
+            statement = select(Books).filter_by(id=book_id)
+            book = session.scalar(statement)
+            if book is not None:
+                book.bought = bought
+                session.commit()
+                return 0
     return 1
 
 def get_number_books() -> int:
@@ -166,4 +189,41 @@ def get_number_books() -> int:
         count = session.query(func.count()).select_from(Books).scalar()
         return count
 
+def get_book_by_user(user_id: str) -> list[Book]:
+    """
+    This function returns the list of books of a user
+
+    Parameters:
+    -----------
+    user_id : the id of the user (str)
+
+    Return :
+    --------
+    books_data : the list of books of the user (list of Object Book)
+    """
+    with Session() as session:
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        
+        books = user.book
+
+        return books
     
+def add_owner(book_id, user_id):
+    """
+    This function adds an owner to a book
+    We don't delete the previous owner because he can view his sold books
+
+    Parameters:
+    -----------
+    book_id : the id of the book (str)
+    user_id : the id of the user (str)
+    """
+    with Session() as session:
+        statement = select(Books).filter_by(id=book_id)
+        book = session.scalar(statement)
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        book.user.append(user)
+        session.commit()
+        return True

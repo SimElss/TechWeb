@@ -1,0 +1,68 @@
+{% extends "index.html" %}
+{% from "book_macro.html" import show_books %}
+{% block content %}
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+    <!-- Navigation tabs -->
+    <li class="nav-item" style="margin-left: auto;">
+        <a class="nav-link link-body-emphasis" href="/liste">Accueil</a>
+        <!-- Link to home page -->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="/profile">Profil</a>
+        <!-- Link to profile page -->
+    </li>
+     <!-- Check if the current user is an admin -->
+    {% if current_user.group == "admin" %}
+    <li class="nav-item">
+        <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+        <!-- Link to admin page -->
+    </li>
+    <br> 
+    {% endif %}
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post" >
+            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
+            <!-- Logout button -->
+        </form>
+    </li>
+</ul>
+<br>
+<div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
+    <h2 class="display-6 text-center">Profil - {{ current_user.group }}</h2><br>
+    <form action="/profile" method="post">
+        <div class="input-group mb-3">
+            <label for="name" class="input-group-text">Nom</label>
+            <input type="text" id="name" class="form-control" name="name" value="{{current_user.name}}" required="true"/>
+        </div>
+        <div class="input-group mb-3">
+            <label for="surname" class="input-group-text">Prénom</label>
+            <input type="text" id="surname" class="form-control" name="surname" value="{{current_user.surname}}" required="true"/>
+        </div>
+        <div class="input-group mb-3">
+            <label for="username" class="input-group-text">Nom d'utilisateur</label>
+            <input type="text" id="username" class="form-control" name="username" value="{{current_user.username}}" required="true"/>
+        </div>
+        <div class="grid text-center">
+            <a href="/new_mdp"><button type="button" class="btn btn-outline-dark">Changer de mot de passe</button></a>
+            <button type="submit" class="btn btn-outline-dark">Modifier le profil</button>
+            <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>
+        </div>
+    </form>
+    <br>
+    <h2 class="display-6 text-center">Livres</h2><br>
+    <table class="table table-hover">
+        <tr>
+            <th>Id</th>
+            <th>Nom</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+            <th>Prix</th>
+            <th>Etat</th>
+            <th>Actions</th>
+        </tr>
+        {% for book in books %}
+            {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought) }}
+        {% endfor%}
+    </table>
+</div>
+{% endblock %}

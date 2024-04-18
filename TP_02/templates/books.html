@@ -4,12 +4,17 @@
 
 <ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
 <!-- Navigation tabs -->
-{% if current_user.group == "admin" %}
+{%if current_user != None%}
 <!-- Check if the current user is an admin -->
     <li class="nav-item" style="margin-left: auto;">
-      <a class="nav-link active" href="/liste">Home</a>
+      <a class="nav-link active" href="/liste">Accueil</a>
       <!-- Link to home page -->
     </li>
+    <li class="nav-item">
+        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
+        <!-- Link to profile page -->
+    </li>
+{% if current_user.group == "admin" %}
     <li class="nav-item">
         <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
         <!-- Link to admin page -->
@@ -19,10 +24,16 @@
 {% endif %}
     <li class="nav-item" style="margin-left: auto;">
         <form action="/logout" method="post" >
-            <button class="btn btn-danger" type="submit" >Logout</button>
+            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
             <!-- Logout button -->
         </form>
     </li>
+{%else%}
+    <li class="nav-item" style="margin-left: auto;">
+        <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
+        <!-- Link to login page -->
+    </li>
+{%endif%}
 </ul>
 
 <div class="container">
@@ -32,18 +43,20 @@
     <!-- Table to display books -->
         <tr>
             <th>Id</th>
+            <th>Propriétaire</th>
             <th>Nom</th>
             <th>Auteur</th>
             <th>Editeur</th>
-            {% if current_user.group == "admin" %}
-            <!-- Check if the current user is an admin -->
+            <th>Prix</th>
+            {% if current_user != None%}
             <th>Actions</th>
-            <!-- Table header for actions -->
-            {% endif %}
+            {%endif%}
         </tr>
-        {% for book in books %}
+        {% for book, owner in book_with_owner %}
         <!-- Loop through each book -->
-            {{ show_books(book.id, book.name, book.Author, book.Editor, current_user.group) }}
+            {%if book.bought == False%}
+                {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought, owner.username) }}
+            {%endif%}
             <!-- Use the show_books macro to display book information -->
         {% endfor %}
 
@@ -51,13 +64,6 @@
         <!-- Table row for the number of books -->
 
     </table>
-    {% if current_user.group == "admin" %}
-    <!-- Check if the current user is an admin -->
-    <div class="grid text-center" style="margin-bottom: 5%;">
-        <a href="/save"><button type="button" class="btn btn-outline-dark g-col-6 w-25 p-2">Ajouter un nouveau livre</button></a>    
-        <!-- Button to add a new book -->
-    </div>
-    {% endif %}
 
 </div>
 {% endblock %}

@@ -8,3 +8,5 @@ class Book(BaseModel):
     name: str
     Author: str
     Editor: Optional[str] = None #Editor is optional <=> str | None
+    price: float
+    bought: bool

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, String, Boolean, Table
+from sqlalchemy import Column, ForeignKey, String, Boolean, Table, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, Optional
 
@@ -17,17 +17,19 @@ association_table = Table(
         "book_id",
         ForeignKey("books.id"),
         primary_key=True
-),
+    ),
 )
 
 class Books(Base):
     __tablename__= 'books'
 
     id: Mapped[str] = mapped_column(String(72), primary_key=True)
-    title: Mapped[str] = mapped_column(String(72))
+    name: Mapped[str] = mapped_column(String(72))
     Author: Mapped[str] = mapped_column(String(72))
     Editor: Mapped[Optional[str]] = mapped_column(String(72), nullable=True)
-    
+    price: Mapped[float] = mapped_column(Float(72))
+    bought: Mapped[bool] = mapped_column(Boolean)
+
     user:  Mapped[List["Users"]] = relationship(
         secondary = association_table, back_populates="book"
     )
@@ -53,9 +55,9 @@ class Users(Base):
     group: Mapped[str] = mapped_column(String(7))
     whitelist: Mapped[bool] = mapped_column(Boolean)
 
-    admin: Mapped[List["Admins"]] = relationship()
     book: Mapped[List["Books"]] = relationship(
         secondary = association_table, back_populates="user"
     )
+    admin: Mapped[List["Admins"]] = relationship()
 
 

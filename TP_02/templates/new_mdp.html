@@ -1,0 +1,32 @@
+{%extends "index.html"%}
+{% block content %}
+
+<div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
+    <h2 class="display-6 text-center">Changement de mot de passe</h2><br>
+    <form action="/new_mdp" method="post">
+        {%if current_user == None%}
+        <div class="input-group mb-3">
+            <label for="email" class="input-group-text">Email</label>
+            <input type="email" id="email" class="form-control" name="email" required={{required}}/>
+        </div>
+        {%endif%}
+        <div class="input-group mb-3">
+            <label for="old_pwd" class="input-group-text">Ancien mot de passe</label>
+            <input type="password" id="old_pwd" class="form-control" name="old_pwd" required="true"/>
+        </div>
+        <div class="input-group mb-3">
+            <label for="new_pwd" class="input-group-text">Nouveau mot de passe</label>
+            <input type="password" id="new_pwd" class="form-control" name="new_pwd" required="true"/>
+        </div>
+        <div class="input-group mb-3">
+            <label for="new_pwd_confirm" class="input-group-text">Confirmer le mot de passe</label>
+            <input type="password" id="new_pwd_confirm" class="form-control" name="new_pwd_confirm" required="true"/>
+        </div>
+        <div class="grid text-center">
+            <a href="/liste"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
+            <button type="submit" class="btn btn-outline-dark">Confirmer</button>
+        </div>
+    </form>
+</div>
+    
+{% endblock %}

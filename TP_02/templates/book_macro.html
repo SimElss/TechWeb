@@ -1,28 +1,51 @@
-{% macro show_books(id, name, Author, Editor, group) %}
+{% macro show_books(id, name, Author, Editor, price, user, in_profile, bought, owner=None) %}
 <!-- Define a macro named show_books with parameters for book information -->
     <tr>
     <!-- Start a table row -->
-        <td> {{ id }} </td>
+        <td>{{ id }}</td>
+        <!-- Display the book ID -->
+        {% if owner != None %}
+        <td>{{ owner }}</td>
+        {%endif%}
         <td>{{ name }}</td>
         <td>{{ Author }}</td>
+        {% if Editor != None%}
         <td>{{ Editor }}</td>
-        {% if group == "admin" %}
-        <td>
-        <!-- Start a table data cell for actions -->
-            <div class="grid text-center" style="display:flex;flex-direction: row">
-            <!-- Create a grid layout for buttons -->
-                <form action="/modify/{{id}}" method="get" style="margin-right:5%;">
-                <!-- Form to modify book -->
-                    <button type="submit" id="button_submit"></button>
-                    <!-- Submit button for modification -->
-                </form>
-                <form action="/delete/{{id}}" method="post" style="margin-right:5%;">
-                <!-- Form to delete book -->
-                    <button type="submit" id="button_submit2"></button>
-                    <!-- Submit button for deletion -->
-                </form>
-            </div>
-        </td>
-        {% endif %}
+        {%else%}
+        <td></td>
+        {%endif%}
+        <td>{{ price }}€</td>
+        {%if in_profile == True and bought == True%}
+        <td>Vendu</td>
+        {%elif in_profile == True and bought == False%}
+        <td>En vente</td>
+        {%endif%}
+        {% if user != None%}
+            <td>
+            {% if user.group == "admin" or in_profile == True%}
+            <!-- Start a table data cell for actions -->
+                <div class="grid text-center" style="display:flex;flex-direction: row">
+                <!-- Create a grid layout for buttons -->
+                    <form action="/modify/{{id}}" method="get" style="margin-right:5%;">
+                    <!-- Form to modify book -->
+                        <button type="submit" id="button_submit"></button>
+                        <!-- Submit button for modification -->
+                    </form>
+                    <form action="/delete/{{id}}" method="post" style="margin-right:5%;">
+                    <!-- Form to delete book -->
+                        <button type="submit" id="button_submit2"></button>
+                        <!-- Submit button for deletion -->
+                    </form>
+            {% endif %}
+            {% if in_profile == False and owner != user.username%}
+                    <form action="/buy/{{id}}" method="post" style="margin-right:5%;">
+                    <!-- Form to buy book -->
+                        <button type="submit" id="button_submit3"></button>
+                        <!-- Submit button for buying -->
+                    </form>
+                </div>
+            {%endif%}
+            </td>
+        {%endif%}
     </tr>
 {% endmacro %}
