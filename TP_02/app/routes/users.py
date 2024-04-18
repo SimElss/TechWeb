@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from ..services.users import add_user, get_all_users, get_user_by_id, set_user_group, set_user_whitelist, get_user_by_email, change_user_password, modifify_user_profile
-from ..services.books import get_book_by_user
+from ..services.books import get_book_by_user, get_number_books_of_user
 from fastapi import status, Depends, Form
 from ..login_manager import login_manager
 from fastapi.responses import RedirectResponse
@@ -243,9 +243,10 @@ def profile(request: Request, user: UserSchema = Depends(login_manager)):
         return RedirectResponse(url=f"/error/{description}/login", status_code=302)
     profile = True
     books = get_book_by_user(user.id)
+    nb = get_number_books_of_user(user.id)
     return templates.TemplateResponse(
         "profile.html", 
-        context={'request': request, 'current_user': user, 'books':books, 'in_profile':profile}
+        context={'request': request, 'current_user': user, 'books':books, 'in_profile':profile, 'nb':nb}
     )
 
 # Route for modifying profile (POST request)

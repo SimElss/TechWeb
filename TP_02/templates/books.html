@@ -54,8 +54,8 @@
         </tr>
         {% for book, owner in book_with_owner %}
         <!-- Loop through each book -->
-            {%if book.bought == False%}
-                {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought, owner.username) }}
+            {%if book.bought == False or current_user.group == "admin"%}
+                {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought, owner) }}
             {%endif%}
             <!-- Use the show_books macro to display book information -->
         {% endfor %}

@@ -189,6 +189,24 @@ def get_number_books() -> int:
         count = session.query(func.count()).select_from(Books).scalar()
         return count
 
+def get_number_books_of_user(user_id: str) -> int:
+    """
+    This function returns the number of books of a user
+
+    Parameters:
+    -----------
+    user_id : the id of the user (str)
+
+    Return :
+    --------
+    count : the number of books of the user (int)
+    """
+    with Session() as session:
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        count = len(user.book)
+        return count
+
 def get_book_by_user(user_id: str) -> list[Book]:
     """
     This function returns the list of books of a user

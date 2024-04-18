@@ -5,7 +5,7 @@
         <td>{{ id }}</td>
         <!-- Display the book ID -->
         {% if owner != None %}
-        <td>{{ owner }}</td>
+        <td>{{ owner.surname }} {{ owner.name }}</td>
         {%endif%}
         <td>{{ name }}</td>
         <td>{{ Author }}</td>
@@ -37,7 +37,7 @@
                         <!-- Submit button for deletion -->
                     </form>
             {% endif %}
-            {% if in_profile == False and owner != user.username%}
+            {% if in_profile == False and owner.email != user.email and bought == False%}
                     <form action="/buy/{{id}}" method="post" style="margin-right:5%;">
                     <!-- Form to buy book -->
                         <button type="submit" id="button_submit3"></button>

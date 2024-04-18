@@ -48,14 +48,14 @@ def initialiser_db():
             book_3 = Books(id = str(uuid4()), name="The Hobbit", Author="J.R.R. Tolkien", Editor = "Bob Doe", price= 20.0, bought = False)
 
             password_1="Admin!123"
-            password_2 = "Test123!"
+            password_2 = "Password!123"
             encoded_password = password_1.encode()
             hashed_password = hashlib.sha3_256(encoded_password).hexdigest()
 
             encoded_password = password_2.encode()
             hashed_password_2 = hashlib.sha3_256(encoded_password).hexdigest()
             user_1 = Users(id= str(uuid4()),username= "admin", name= "admin", surname= "admin", password= hashed_password, email= "admin@juice-sh.op", group= "admin", whitelist= True)
-            user_2 = Users(id= str(uuid4()),username= "User2", name= "John", surname= "Doe", password= hashed_password_2, email= "test@gmail.com", group= "client", whitelist= True)
+            user_2 = Users(id= str(uuid4()),username= "User2", name= "Doe", surname= "John", password= hashed_password_2, email= "test@gmail.com", group= "client", whitelist= True)
 
             admin_1 = Admins(id=1, user_id=user_1.id)
 
