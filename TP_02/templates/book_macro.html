@@ -1,10 +1,14 @@
-{% macro show_books(id, name, Author, Editor, price, user, in_profile, bought, owner=None) %}
+{% macro show_books(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
 <!-- Define a macro named show_books with parameters for book information -->
+    {% if (new_owner != None and owner.id == new_owner) or new_owner == None%}
     <tr>
     <!-- Start a table row -->
         <td>{{ id }}</td>
         <!-- Display the book ID -->
-        {% if owner != None %}
+        {% if owner != None and new_owner == None%}
+        <td>{{ owner.surname }} {{ owner.name }}</td>
+        {%endif%}
+        {% if new_owner != None and owner.id == new_owner%}
         <td>{{ owner.surname }} {{ owner.name }}</td>
         {%endif%}
         <td>{{ name }}</td>
@@ -48,4 +52,5 @@
             </td>
         {%endif%}
     </tr>
+    {%endif%}
 {% endmacro %}

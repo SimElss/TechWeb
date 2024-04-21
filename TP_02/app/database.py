@@ -43,9 +43,9 @@ def initialiser_db():
         # Vérifie si la table est déjà peuplée
         if session.query(Users).count() == 0:
             # Créer des instances de vos modèles
-            book_1 = Books(id = str(uuid4()), name="Animagus", Author="Alice", Editor = "John Doe", price= 10.0, bought = False)
-            book_2 = Books(id = str(uuid4()), name="Les misérables", Author="Victor Hugo", Editor = "Marc Doe", price= 15.0, bought = False)
-            book_3 = Books(id = str(uuid4()), name="The Hobbit", Author="J.R.R. Tolkien", Editor = "Bob Doe", price= 20.0, bought = False)
+            book_1 = Books(id = str(uuid4()), name="Animagus", Author="Alice", Editor = "John Doe", price= 10.0, bought = False, new_owner_id = None)
+            book_2 = Books(id = str(uuid4()), name="Les misérables", Author="Victor Hugo", Editor = "Marc Doe", price= 15.0, bought = False, new_owner_id = None)
+            book_3 = Books(id = str(uuid4()), name="The Hobbit", Author="J.R.R. Tolkien", Editor = "Bob Doe", price= 20.0, bought = False, new_owner_id = None)
 
             password_1="Admin!123"
             password_2 = "Password!123"

@@ -255,8 +255,9 @@ def get_book_owners():
         .join(Users, Users.id == association_table.c.user_id)
         .all()
     )
+    print(book_with_owners)
 
-        return book_with_owners
+    return book_with_owners
     
 def get_user_by_book(book_id:str):
     """

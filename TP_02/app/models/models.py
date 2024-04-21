@@ -29,6 +29,7 @@ class Books(Base):
     Editor: Mapped[Optional[str]] = mapped_column(String(72), nullable=True)
     price: Mapped[float] = mapped_column(Float(72))
     bought: Mapped[bool] = mapped_column(Boolean)
+    new_owner_id: Mapped[Optional[str]] = mapped_column(String(72), nullable=True)
 
     user:  Mapped[List["Users"]] = relationship(
         secondary = association_table, back_populates="book"

@@ -55,13 +55,14 @@
         {% for book, owner in book_with_owner %}
         <!-- Loop through each book -->
             {%if book.bought == False or current_user.group == "admin"%}
-                {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought, owner) }}
+                {{ show_books(book.id, book.name, book.Author, book.Editor, book.price, current_user, in_profile, book.bought, owner, book.new_owner_id) }}
             {%endif%}
             <!-- Use the show_books macro to display book information -->
         {% endfor %}
 
-        <th colspan="4">Nombres de livres : {{ Nombre }}</th>
         <!-- Table row for the number of books -->
+        <th colspan="6">Nombres de livres : {{ Nombre }}</th>
+
 
     </table>
 

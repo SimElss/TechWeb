@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 from uuid import uuid4
 from fastapi import APIRouter, status, Depends
 from ..login_manager import login_manager
-from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books, get_book_by_id, add_owner
+from ..services.books import get_all_books, delete_book, modify_book, save_books, get_number_books, get_book_by_id, add_owner, get_number_books_client
 from ..services.users import get_book_owners, get_user_by_book
 from ..schemas.users import UserSchema
 from ..schemas.books import Book
@@ -41,7 +41,10 @@ def error(request: Request, description: str, url: str):
 @router.get("/liste")
 def list_books(request: Request, user: UserSchema = Depends(login_manager.optional)):
     book_with_owner = get_book_owners()
-    nb = get_number_books()
+    if user.group == "admin":
+        nb = get_number_books()
+    else:
+        nb = get_number_books_client()
     profile = False
     return templates.TemplateResponse(
         "books.html", 
@@ -102,10 +105,9 @@ def save(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
         return RedirectResponse(url="/login", status_code=302)
     # check if user is admin -> only admin can modify book
-    nb = get_number_books()
     return templates.TemplateResponse(
         "save_book.html", 
-        context={'request': request, 'Nombre': nb, 'current_user': user}
+        context={'request': request, 'current_user': user}
     )
 
 # Route to add a new book (POST request)
@@ -117,7 +119,8 @@ def save(name: Annotated[str, Form()], Author: Annotated[str, Form()],price:Anno
         "Author" : Author,
         "Editor": Editor,
         "price": price,
-        "bought": False
+        "bought": False,
+        "new_owner_id": None
         }
     new_book = Book.model_validate(new_book)
     saved_book = save_books(new_book, user.id)

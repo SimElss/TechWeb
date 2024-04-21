@@ -10,3 +10,4 @@ class Book(BaseModel):
     Editor: Optional[str] = None #Editor is optional <=> str | None
     price: float
     bought: bool
+    new_owner_id: Optional[str] = None

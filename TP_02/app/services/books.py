@@ -44,7 +44,8 @@ def save_books(new_book: Book, user_id: str):
             Author = new_book.Author, 
             Editor = new_book.Editor,
             price = new_book.price,
-            bought = new_book.bought
+            bought = new_book.bought,
+            new_owner_id = new_book.new_owner_id
         )
         session.add(new_book_entity)#add book to database
 
@@ -179,15 +180,32 @@ def modify_book(book_id: str, bought:bool, name:str = None, Author:str = None, E
 
 def get_number_books() -> int:
     """
-    This function returns the current number of books
+    This function returns the current number of books by id
 
     Return :
     --------
     count : the number of books (int) 
     """
     with Session() as session:
-        count = session.query(func.count()).select_from(Books).scalar()
+        statement = select(func.count(Books.id))
+        count = session.scalar(statement)
         return count
+    
+def get_number_books_client() -> int:
+    """
+    This function return the books of the client view so only the books which are not bought and by id
+
+    Return :
+    --------
+    count : the number of books (int)
+    """
+
+    with Session() as session:
+        statement = select(func.count(Books.id)).filter_by(bought=False)
+        count = session.scalar(statement)
+        return count
+    
+
 
 def get_number_books_of_user(user_id: str) -> int:
     """
@@ -243,5 +261,6 @@ def add_owner(book_id, user_id):
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
         book.user.append(user)
+        book.new_owner_id = user_id
         session.commit()
         return True
