@@ -55,7 +55,7 @@ def initialiser_db():
             encoded_password = password_2.encode()
             hashed_password_2 = hashlib.sha3_256(encoded_password).hexdigest()
             user_1 = Users(id= str(uuid4()),username= "admin", name= "admin", surname= "admin", password= hashed_password, email= "admin@juice-sh.op", group= "admin", whitelist= True)
-            user_2 = Users(id= str(uuid4()),username= "User2", name= "Doe", surname= "John", password= hashed_password_2, email= "test@gmail.com", group= "client", whitelist= True)
+            user_2 = Users(id= str(uuid4()),username= "User2", name= "Doe", surname= "John", password= hashed_password_2, email= "user@gmail.com", group= "client", whitelist= True)
 
             admin_1 = Admins(id=1, user_id=user_1.id)
 
