@@ -1,0 +1,22 @@
+.card {
+    width: 18rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+    user-select: none;
+  }
+
+.card:hover {
+background-color: lightseagreen;
+}
+
+.col-title {
+    margin-bottom: 15px;
+}
+
+#book_to_buy {
+  cursor:move;
+}
+
+#book_to_buy.dragging {
+  opacity: 0.5;
+}

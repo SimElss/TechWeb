@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drop your book</title>
+    <!--CSS personalised style sheet-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!--Link to distant Bootstrap server-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Welcome</h1>
+    <!--Div which contains the drag and drop part-->
+    <div class="container">
+
+        <h1 class="text-center">Drag and buy</h1>
+        <!--Row which contains the two columns-->
+        <div class="row">
+          <!--Column of the books to buy-->
+          <div class="col bg-light border rounded m-4 p-4" id = "to_buy" name="dropzone">
+            <h2 class="col-title">To buy</h2>
+            <!--Card which contains the book to buy-->
+            <div class="card" id="book_to_buy" draggable="true">
+              <div class="card-body">
+                <h4 class="book-title">Percy Jackson</h4>
+                <h5 class="book-author">Rick Riordan</h5>
+                <h5 class="book-price">10€</h5>
+                <h6 class="book-id"></h6>
+                <button class="btn btn-danger" id="delete_button">Delete</button>
+              </div>
+            </div>
+            <!--Card which contains the book to buy-->
+            <div class="card" id="book_to_buy" draggable="true">
+              <div class="card-body">
+                <h4 class="book-title">Le Cercle des Poètes Disparus</h4>
+                <h5 class="book-author">Robin Williams</h5>
+                <h5 class="book-price">15€</h5>
+                <h6 class="book-id"></h6>
+                <button class="btn btn-danger" id="delete_button">Delete</button>
+              </div>
+            </div>
+          </div>
+          <!--Column of the books bought-->
+          <div class="col bg-light border rounded m-4 p-4" id="bought" name="dropzone">
+            <h2 class="col-title">Bought</h2>
+            <div class="card" id="book_bought">
+              <!--Card which contains a sold book-->
+              <div class="card-body">
+                <h4 class="book-title">Harry Potter</h4>
+                <h5 class="book-author">J.K Rowling</h5>
+                <h5 class="book-price">100€</h5>
+                <h6 class="book-id"></h6>
+                <button class="btn btn-danger" id="delete_button">Delete</button>
+              </div>
+            </div>
+            <!--Card which contains a sold book-->
+            <div class="card" id="book_bought">
+              <div class="card-body">
+                <h4 class="book-title">1984</h4>
+                <h5 class="book-author">George Orwell</h5>
+                <h5 class="book-price">10€</h5>
+                <h6 class="book-id"></h6>
+                <button class="btn btn-danger" id="delete_button">Delete</button>
+              </div>
+            </div>
+            <!--Card which contains a sold book-->
+            <div class="card" id="book_bought">
+              <div class="card-body">
+                <h4 class="book-title">L'Alchimiste</h4>
+                <h5 class="book-author">Paulo Coelho</h5>
+                <h5 class="book-price">12€</h5>
+                <h6 class="book-id"></h6>
+                <button class="btn btn-danger" id="delete_button">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!--Div which contains the adding book's form-->
+    <div class="container">
+      <!--Form to add a book-->
+        <h2 class="form-title">Ajouter un livre</h2>
+        <form id="book_form" class="form">
+            <div class="form-group">
+                <label for="name">Nom du livre</label>
+                <input class="form-control" type="text" name="name" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="author">Auteur du livre</label>
+                <input class="form-control" type="text" name="author" id="author" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Prix du livre</label>
+                <input class="form-control" type="text" name="price" id="price" required>
+                </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="sold" id="sold">
+                <label class="form-check-label" for="sold">Livre vendu</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+    </div>
+    <!--Link to distant jQuery server-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!--Link to distant Bootstrap server-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!--Link to the script.js file-->
+    <script src="script.js"></script>
+</body>
+</html>
