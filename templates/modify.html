@@ -1,0 +1,53 @@
+{% extends "index.html" %}
+{% from "beer_macro.html" import show_beers %}
+{% block content %}
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post" >
+            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
+            <!-- Logout button -->
+        </form>
+    </li>
+</ul><br>
+
+<div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
+    <!-- Container for modifying beer -->
+    <h2 class="display-6 text-center">Modifier le livre</h2><br>
+    <!-- Title for modifying beer section -->
+    <form action="/modify/{{beer.id}}" method="post">
+        <!-- Form for modifying beer -->
+        <div class="input-group mb-3">
+            <!-- Form group for beer name -->
+            <label for="beer_name" class="input-group-text">Nom</label>
+            <input type="text" id="beer_name" class="form-control" name="name" value="{{beer.name}}" required="true"/>
+        </div>
+        <div class="input-group mb-3">
+            <!-- Form group for beer author -->
+            <label for="beer_author" class="input-group-text">Auteur</label>
+            <input type="text" id="beer_author" class="form-control" name="Author" required="true" value="{{beer.Author}}"/>
+        </div>
+        <!-- End of beer author form group -->
+        <div class="input-group mb-3">
+            <!-- Form group for beer editor -->
+            <label for="beer_editor" class="input-group-text">Editeur</label>
+            {%if beer.Editor != None%}
+            <input type="text" id="beer_editor" class="form-control" name="Editor" value="{{beer.Editor}}"/>
+            {%else%}
+            <input type="text" id="beer_editor" class="form-control" name="Editor" value=""/>
+            {%endif%}
+        </div>
+        <div class="input-group mb-3">
+            <!-- Form group for beer author -->
+            <label for="beer_price" class="input-group-text">Prix</label>
+            <input type="number" id="beer_price" class="form-control" name="price" required="true" value="{{beer.price}}" min="0"/>
+        </div>
+        <!-- End of beer editor form group -->
+        <div class="grid text-center">
+            <!-- Button group -->
+            <a href="/liste"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
+            <button type="submit" class="btn btn-outline-dark">Confirmer</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

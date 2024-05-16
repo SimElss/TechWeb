@@ -1,0 +1,110 @@
+{% extends "index.html" %}
+{% from "beers_macro.html" import show_beers %}
+{% block content %}
+  <nav class="navbar navbar-expand-lg bg-body-tertiary bg-warning" style="margin-bottom: 20px;">
+      <div class="container-fluid border-bottom border-4 border-warning">
+          <a href="/liste" class="navbar-brand text-warning" style="font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- Link to home page -->
+          <div class="collapse navbar-collapse fs-5" style="margin-left: 75px;" id="navbarNav">
+              <ul class="navbar-nav end-0" >
+                  <!-- Navigation tabs -->
+                  {%if current_user != None%}
+                  <!-- Check if the current user is an admin -->
+                      <li class="nav-item ">
+                      <a class="nav-link active " href="/liste">Accueil</a>
+                      <!-- Link to home page -->
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link link-body-emphasis" style="margin-right: 600px;" href="/profile">Profil</a>
+                          <!-- Link to profile page -->
+                      </li>
+                  {% if current_user.group == "admin" %}
+                      <li class="nav-item">
+                          <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                          <!-- Link to admin page -->
+                      </li>
+                      <br>
+                      <!-- Line break -->
+                  </div>
+                  
+                  {% endif %}
+                      <li class="nav-item dropdown" >
+                          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Bonjour Mr/Mlle {{current_user.name}}
+                          </a>
+                          <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="/panier">Panier</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-warning" type="submit" >Se déconnecter</button>
+                                  <!-- Logout button -->
+                                  </form></a>
+                              </li>
+                          </ul>
+                      </li>
+                  {%else%}
+                      <li class="nav-item" style="margin-left: auto;">
+                          <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
+                          <!-- Link to login page -->
+                      </li>
+                  {%endif%}
+              </ul>
+          
+      </div>
+  </nav>
+
+<div class="container">
+<!-- End of row -->
+    <!-- Table to display beers
+        <tr>
+            <th>Id</th>
+            <th>Propriétaire</th>
+            <th>Nom</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+            <th>Prix</th>-->
+            {% if current_user != None%}
+            {%endif%}
+        {% for beer, owner in beer_with_owner %}
+        
+        <div class="col col-sm-12 col-md-12 mb-3 mb-sm-0">
+            <!-- Column for alcohol item -->
+            <div class="row g-0">
+                <div class="col-md-2">
+                    <img src="..." class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card border-warning mb-3" style="width: 100%;">
+                        <!-- Adjusted card width -->
+                        <div class="card-body">
+                            <!-- Body of the card -->
+                            <h5 class="card-title">{{ beer.name }}</h5>
+                            <!-- Name of the alcohol -->
+                            <p class="card-text">Prix: {{ beer.price }}</p>
+                            <!-- Price of the alcohol -->
+                            {% if current_user != None %}
+                            <!-- Check if user is logged in -->
+                            <a href="#" class="btn btn-outline-warning">Acheter</a>
+                            <!-- Button to buy alcohol -->
+                            {% endif %}
+                        </div>
+                        <!-- End of card body -->
+                    </div>
+                    <!-- End of card -->
+                </div>
+            </div>
+        </div>
+            <!-- End of column -->
+        {% endfor %}
+
+        <!-- Table row for the number of beers -->
+        <br>
+        <th colspan="6" >Nombres d'articles : {{ Nombre }}</th>    
+    </div>
+    
+    
+
+</div>
+{% endblock %}

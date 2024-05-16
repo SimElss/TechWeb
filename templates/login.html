@@ -1,0 +1,32 @@
+{% extends "index.html"%}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <h2 class="text-center">Connexion</h2>
+            <form action="/login" method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+            <p class="text-center">Pas encore de compte ? <a href="/register">Inscrivez-vous</a></p>
+            <p class="text-center">Changer de mot de passe ? <a href="/new_mdp">Réinitialisez-le</a></p>
+            <p class="text-center"><a href="/liste">Continuer hors-connexion</a></p>
+
+        </div>
+        {% if message != "None" %}
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+jinja2
+fastapi_login
+SQLAlchemy
+python-multipart
+sqlalchemy.orm
+hashlib

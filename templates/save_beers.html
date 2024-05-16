@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% block content %}
+
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post" >
+            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
+            <!-- Logout button -->
+        </form>
+    </li>
+</ul><br>
+
+<form action="/save" method="post" class="container">
+    <!-- Form for adding a new beer -->
+    <h1 class="display-6 text-center">Ajouter un nouveau livre</h1><br>
+
+    <div class="input-group mb-3">
+        <!-- Form group for beer name -->
+        <label for="beer_name" class="input-group-text">Nom du livre</label>
+        <input type="text" id="beer_name" class="form-control"
+               name="name" placeholder="Percy Jackson et le voleur de foudre" required="true"/>
+    </div>
+
+    <div class="input-group mb-3">
+        <!-- Form group for beer author -->
+        <label for="beer_author" class="input-group-text">Auteur</label>
+        <input type="text" id="beer_author" class="form-control"
+               name="Author" required="true" placeholder="Rick Riordan"/>
+    </div>
+
+    <div class="input-group mb-3">
+        <!-- Form group for beer editor -->
+        <label for="beer_editor" class="input-group-text">Editeur</label>
+        <input type="text" id="beer_editor" class="form-control"
+               name="Editor" placeholder="LPG"/>
+    </div>
+    <div class="input-group mb-3">
+        <!-- Form group for beer price -->
+        <label for="beer_price" class="input-group-text">Prix</label>
+        <input type="number" id="beer_price" class="form-control"
+               name="price" required="true" placeholder="15" min="0"/>
+    </div>
+    <div class="d-flex justify-content-between">
+        <!-- Container for buttons -->
+        <div>
+        <a href="/profile"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
+        <button type="submit" class="btn btn-outline-dark">Confirmer</button>
+        </div>
+    </div>    
+</form>
+{% endblock %}
