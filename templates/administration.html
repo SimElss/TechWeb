@@ -1,0 +1,92 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div style="position: absolute; top: 10px; right: 10px;">
+    <!-- Positioning for any additional content -->
+</div>
+
+<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
+    <!-- Navigation tabs -->
+    <li class="nav-item" style="margin-left: auto;">
+        <a class="nav-link link-body-emphasis" href="/liste">Accueil</a>
+        <!-- Link to home page -->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
+        <!-- Link to profile page -->
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="/administration">Admin</a>
+        <!-- Link to admin page, currently active -->
+    </li>
+    <li class="nav-item" style="margin-left: auto;">
+        <form action="/logout" method="post">
+            <button class="btn btn-danger" type="submit">Se déconnecter</button>
+            <!-- Logout button -->
+        </form>
+    </li>
+</ul>
+<br>
+
+<div class="container">
+    <!-- Container for user administration content -->
+    <h1 class="display-6 text-center">Administration</h1>
+    <!-- Heading for the administration section -->
+
+    <table class="table table-hover">
+        <!-- Table to display user information -->
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Group</th>
+            <th>Actions</th>
+            <!-- Table headers -->
+        </tr>
+        {% for user in users %}
+        <!-- Loop through each user -->
+        <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.group}}</td>
+
+            <td>
+                <!-- Actions for user management -->
+                <div class="grid text-center" style="display:flex;flex-direction: row">
+                    {% if user.group != "admin" %}
+                    <!-- If user is not an admin -->
+                    <form action="/promote/{{user.id}}" method="post" style="margin-right:5%;">
+                        <!-- Form to promote user -->
+                        <button type="submit" class="btn btn-success">Promote</button>
+                        <!-- Promote button -->
+                    </form>
+                    {% else %}
+                    <!-- If user is an admin -->
+                    <form action="/promote/{{user.id}}" method="post" style="margin-right:5%;">
+                        <!-- Form to demote user -->
+                        <button type="submit" class="btn btn-warning">Demote</button>
+                        <!-- Demote button -->
+                    </form>
+                    {% endif %}
+
+                    {% if user.whitelist != True %}
+                    <!-- If user is not whitelisted -->
+                    <form action="/block/{{user.id}}" method="post">
+                        <!-- Form to unblock user -->
+                        <button type="submit" class="btn btn-success">Unblock</button>
+                    </form>
+                    {% else %}
+                    <!-- If user is whitelisted -->
+                    <form action="/block/{{user.id}}" method="post">
+                        <!-- Form to block user -->
+                        <button type="submit" class="btn btn-danger">Block</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

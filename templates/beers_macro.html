@@ -1,0 +1,51 @@
+{% macro show_beers(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
+<!-- Define a macro named show_beers with parameters for beer information -->
+    {% if (new_owner != None and owner.id == new_owner) or new_owner == None%}
+    <tr>
+    <!-- Start a table row -->
+        <td>{{ id }}</td>
+        <!-- Display the beer ID -->
+        
+        <td>{{ name }}</td>
+        <td>{{ Author }}</td>
+        {% if Editor != None%}
+        <td>{{ Editor }}</td>
+        {%else%}
+        <td></td>
+        {%endif%}
+        <td>{{ price }}€</td>
+        {%if in_profile == True and bought == True%}
+        <td>Vendu</td>
+        {%elif in_profile == True and bought == False%}
+        <td>En vente</td>
+        {%endif%}
+        {% if user != None%}
+            <td>
+            {% if user.group == "admin" or in_profile == True%}
+            <!-- Start a table data cell for actions -->
+                <div class="grid text-center" style="display:flex;flex-direction: row">
+                <!-- Create a grid layout for buttons -->
+                    <form action="/modify/{{id}}" method="get" style="margin-right:5%;">
+                    <!-- Form to modify beer -->
+                        <button type="submit" id="button_submit"></button>
+                        <!-- Submit button for modification -->
+                    </form>
+                    <form action="/delete/{{id}}" method="post" style="margin-right:5%;">
+                    <!-- Form to delete beer -->
+                        <button type="submit" id="button_submit2"></button>
+                        <!-- Submit button for deletion -->
+                    </form>
+            {% endif %}
+            {% if in_profile == False and owner.email != user.email and bought == False%}
+                    <form action="/buy/{{id}}" method="post" style="margin-right:5%;">
+                    <!-- Form to buy beer -->
+                        <button type="submit" id="button_submit3"></button>
+                        <!-- Submit button for buying -->
+                    </form>
+                </div>
+            {%endif%}
+            </td>
+        {%endif%}
+    </tr>
+    {%endif%}
+{% endmacro %}
