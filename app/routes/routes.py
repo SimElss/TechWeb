@@ -40,15 +40,11 @@ def error(request: Request, description: str, url: str):
 # Route to display list of beers
 @router.get("/liste")
 def list_beers(request: Request, user: UserSchema = Depends(login_manager.optional)):
-    beer_with_owner = get_beer_owners()
-    if user.group == "admin":
-        nb = get_number_beers()
-    else:
-        nb = get_number_beers_client()
-    profile = False
+    beers = get_all_beers()
+    nb = get_number_beers()
     return templates.TemplateResponse(
         "beers.html", 
-        context={'request': request,'Nombre': nb, 'current_user': user, 'beer_with_owner': beer_with_owner, 'in_profile': profile}
+        context={'request': request,'Nombre': nb, 'current_user': user, 'beers': beers}
     )
 
 # Route to delete a beer

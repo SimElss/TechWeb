@@ -1,4 +1,4 @@
-{% macro show_beers(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
+{% macro show_beers2(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
 <!-- Define a macro named show_beers with parameters for beer information -->
     {% if (new_owner != None and owner.id == new_owner) or new_owner == None%}
     <tr>
@@ -48,4 +48,16 @@
         {%endif%}
     </tr>
     {%endif%}
+{% endmacro %}
+{% macro show_beers(id, name, brewery, price, stock, description) %}
+<!-- Define a macro named show_books with parameters for book information -->
+    <tr>
+    <!-- Start a table row -->
+        <td> {{ id }} </td>
+        <td>{{ name }}</td>
+        <td>{{ brewery }}</td>
+        <td>{{ price }}</td>
+        <td>{{ stock }}</td>
+        <td>{{ description }}</td>
+    </tr>
 {% endmacro %}

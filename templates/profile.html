@@ -90,7 +90,7 @@
             <th>Actions</th>
         </tr>
         {% for beer in beers %}
-            {{ show_beers(beer.id, beer.name, beer.Author, beer.Editor, beer.price, current_user, in_profile, beer.bought) }}
+            {{ show_beers2(beer.id, beer.name, beer.Author, beer.Editor, beer.price, current_user, in_profile, beer.bought) }}
         {% endfor%}
     </table>
 </div>

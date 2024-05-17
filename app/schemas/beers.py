@@ -6,8 +6,7 @@ from typing import Optional
 class Beer(BaseModel):
     id: str
     name: str
-    Author: str
-    Editor: Optional[str] = None #Editor is optional <=> str | None
+    brewery: str
     price: float
-    bought: bool
-    new_owner_id: Optional[str] = None
+    stock: int
+    description: str

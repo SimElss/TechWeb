@@ -88,7 +88,7 @@ def get_all_beers() -> list[Beer]:
 
     Return :
     --------
-    beers_data : teh list of beers (list of Object Beer)
+    beers_data : thz list of beers (list of Object Beer)
     """
     with Session() as session:
         statement = select(Beers) #Model Beer
@@ -98,9 +98,10 @@ def get_all_beers() -> list[Beer]:
             Beer(
                 id=beer.id,
                 name=beer.name,
-                Author=beer.Author,
-                Editor=beer.Editor,
+                brewery = beer.brewery,
                 price=beer.price,
+                stock=beer.stock,
+                description=beer.description,
             )
             for beer in beers_data
         ]
