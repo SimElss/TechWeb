@@ -10,3 +10,4 @@ class Beer(BaseModel):
     price: float
     stock: int
     description: str
+    image: str

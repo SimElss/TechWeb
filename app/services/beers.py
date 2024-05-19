@@ -3,10 +3,10 @@ from sqlalchemy import select, func
 
 from ..schemas.beers import Beer
 from ..database import Session
-from ..models.models import Beers, Users
+from ..models.models import Beers, Users, association_table
 
 
-def save_beers(new_beer: Beer, user_id: str):
+def save_beers(new_beer: Beers, user_id: str):
     """
     This function is used to save beers
 
@@ -75,10 +75,10 @@ def get_beer_by_id(id: str):
             return Beer(
                 id=beer.id,
                 name=beer.name,
-                Author=beer.Author,
-                Editor=beer.Editor,
+                brewery=beer.brewery,
                 price=beer.price,
-                bought=beer.bought
+                stock=beer.stock,
+                description=beer.description
             )
     return None
 
@@ -102,6 +102,7 @@ def get_all_beers() -> list[Beer]:
                 price=beer.price,
                 stock=beer.stock,
                 description=beer.description,
+                image=beer.image,
             )
             for beer in beers_data
         ]
@@ -131,7 +132,7 @@ def delete_beer(beer_id: str) -> None:
             return True
     return None
 
-def modify_beer(beer_id: str, bought:bool, name:str = None, Author:str = None, Editor:str = None, price:float = None):
+def modify_beer(beer_id: str, name:str = None, brewery:str = None, price:float = None):
     """
     This function modifies a beer
 
@@ -148,33 +149,21 @@ def modify_beer(beer_id: str, bought:bool, name:str = None, Author:str = None, E
     0 : if beer has been modified (int)
     1 : if no beer has been find using beer_id
     """
-    if name != None and Author != None and price != None:
+    if name != None and brewery != None and price != None:
         name = name.strip(" ")
         name = name.strip('\t')
-        Author = Author.strip(" ")
-        Author = Author.strip('\t')
-        if name == "" or Author == "":
+        brewery = brewery.strip(" ")
+        brewery = brewery.strip('\t')
+        if name == "" or brewery == "":
             return None
-        if Editor != None:
-            Editor = Editor.strip(" ")
-            Editor = Editor.strip('\t')
         with Session() as session:
             statement = select(Beers).filter_by(id=beer_id)
             beer = session.scalar(statement)
             if beer is not None:
                 beer.name=name
-                beer.Author=Author
-                beer.Editor=Editor
+                beer.brewery=brewery
                 beer.price=price
 
-                session.commit()
-                return 0
-    else:
-        with Session() as session:
-            statement = select(Beers).filter_by(id=beer_id)
-            beer = session.scalar(statement)
-            if beer is not None:
-                beer.bought = bought
                 session.commit()
                 return 0
     return 1
@@ -223,10 +212,10 @@ def get_number_beers_of_user(user_id: str) -> int:
     with Session() as session:
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
-        count = len(user.beer)
+        count = len(user.beers)
         return count
 
-def get_beer_by_user(user_id: str) -> list[Beer]:
+def get_beer_by_user(user_id: str) -> list[Beers]:
     """
     This function returns the list of beers of a user
 
@@ -241,8 +230,7 @@ def get_beer_by_user(user_id: str) -> list[Beer]:
     with Session() as session:
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
-        
-        beers = user.beer
+        beers = user.beers
 
         return beers
     

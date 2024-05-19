@@ -49,15 +49,16 @@
     </tr>
     {%endif%}
 {% endmacro %}
-{% macro show_beers(id, name, brewery, price, stock, description) %}
+{% macro show_beers(name, brewery, price, stock, description, quantity=1) %}
 <!-- Define a macro named show_books with parameters for book information -->
     <tr>
     <!-- Start a table row -->
-        <td> {{ id }} </td>
         <td>{{ name }}</td>
         <td>{{ brewery }}</td>
         <td>{{ price }}</td>
         <td>{{ stock }}</td>
-        <td>{{ description }}</td>
+        <td>
+            <input style="width: 50px;" type="number" name="quantity" value="{{ quantity }}" min="0"> 
+        </td>
     </tr>
 {% endmacro %}

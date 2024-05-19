@@ -1,12 +1,12 @@
 {% extends "index.html" %}
 {% from "beers_macro.html" import show_beers %}
 {% block content %}
-  <nav class="navbar navbar-expand-lg bg-body-tertiary bg-warning" style="margin-bottom: 20px;">
-      <div class="container-fluid border-bottom border-4 border-warning">
-          <a href="/liste" class="navbar-brand text-warning" style="font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
+<nav class="navbar navbar-expand-lg " style=" height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid border-bottom border-4" style=" padding-bottom: 10px; padding-left: 20px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand " style=" margin-right: 50px; color :#BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
           <!-- Link to home page -->
           <div class="collapse navbar-collapse fs-5" style="margin-left: 75px;" id="navbarNav">
               <ul class="navbar-nav end-0" >
@@ -32,13 +32,13 @@
                   
                   {% endif %}
                       <li class="nav-item dropdown" >
-                          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <a class="nav-link dropdown-toggle " style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               Bonjour Mr/Mlle {{current_user.name}}
                           </a>
                           <ul class="dropdown-menu">
                               <li><a class="dropdown-item" href="/panier">Panier</a></li>
                               <li><hr class="dropdown-divider"></li>
-                              <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-warning" type="submit" >Se déconnecter</button>
+                              <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-dark" type="submit" >Se déconnecter</button>
                                   <!-- Logout button -->
                                   </form></a>
                               </li>
@@ -74,20 +74,22 @@
             <!-- Column for alcohol item -->
             <div class="row g-0">
                 <div class="col-md-2">
-                    <img src="..." class="img-fluid rounded-start" alt="...">
+                    <img src="{{beer.image}}" class="img-fluid rounded-start" alt="{{beer.name}}" style="height: 180px; width: 200px;">
                 </div>
                 <div class="col-md-8">
-                    <div class="card border-warning mb-3" style="width: 100%;">
+                    <div class="card mb-3" style="border-color: #BA4A00; width: 100%;">
                         <!-- Adjusted card width -->
                         <div class="card-body">
                             <!-- Body of the card -->
                             <h5 class="card-title">{{ beer.name }}</h5>
                             <!-- Name of the alcohol -->
+                            <p class="card-text">{{beer.description}}</p>
+
                             <p class="card-text">Prix: {{ beer.price }}</p>
                             <!-- Price of the alcohol -->
                             {% if current_user != None %}
                             <!-- Check if user is logged in -->
-                            <a href="#" class="btn btn-outline-warning">Acheter</a>
+                            <a href="#" class="btn btn-outline-dark " >Acheter</a>
                             <!-- Button to buy alcohol -->
                             {% endif %}
                         </div>
@@ -102,7 +104,7 @@
 
         <!-- Table row for the number of beers -->
         <br>
-        <th colspan="6" >Nombres d'articles : {{ Nombre }}</th>    
+        <div class="grid text-center mb-5">Nombres d'articles : {{ Nombre }}</div>    
     </div>
     
     

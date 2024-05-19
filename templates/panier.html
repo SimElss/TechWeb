@@ -1,9 +1,9 @@
 {% extends "index.html" %}
-{% from "beer_macro.html" import show_beers %}
+{% from "beers_macro.html" import show_beers %}
 {% block content %}
-<nav class="navbar navbar-expand-lg bg-body-tertiary bg-warning" style="margin-bottom: 20px;">
-    <div class="container-fluid border-bottom border-4 border-warning">
-        <a href="/liste" class="navbar-brand text-warning" style="font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+<nav class="navbar navbar-expand-lg " style=" height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid border-bottom border-4" style=" padding-bottom: 10px; padding-left: 20px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand " style=" margin-right: 50px; color :#BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -32,13 +32,13 @@
                 
                 {% endif %}
                     <li class="nav-item dropdown" >
-                        <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle " style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Bonjour Mr/Mlle {{current_user.name}}
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/panier">Panier</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-warning" type="submit" >Se déconnecter</button>
+                            <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-dark" type="submit" >Se déconnecter</button>
                                 <!-- Logout button -->
                                 </form></a>
                             </li>
@@ -54,20 +54,26 @@
         
     </div>
 </nav>
-<h5> Nombres de livres : {{nb}} </h5>
-    <!--<table class="table table-hover">
-        <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>Auteur</th>
-            <th>Editeur</th>
-            <th>Prix</th>
-            <th>Etat</th>
-            <th>Actions</th>
-        </tr>
-        {% for beer in beers %}
-            {{ show_beers(beer.id, beer.name, beer.Author, beer.Editor, beer.price, current_user, in_profile, beer.bought) }}
-        {% endfor%}-->
-    </table>
-</div>
+
+    <div class="container">
+    <h5 class="grid text-center mb-5" style=" color: #BA4A00"> Récapitulatif de votre panier </h5>
+        <table class="table table-hover">
+            <tr>
+                <th>Name</th>
+                <th>Brewery</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Quantity</th>
+            </tr>
+            {% for beer in beers %}
+                {{ show_beers(beer.name, beer.brewery ,beer.price , beer.stock, beer.quantity) }}
+            {% endfor%}
+            
+        </table>
+        <h5 class="grid text-end" style="font-size: 15px;"> Nombres d'articles dans le panier : {{nb}} </h5>
+
+        <div class="grid text-center" style="margin-top: 50px; margin-bottom: 50px;">
+            <a href="/paiement"><button type="button" class="btn btn-outline-dark" style=" width: 50%">Payer le panier</button></a>
+        </div>
+    </div>
 {% endblock %}

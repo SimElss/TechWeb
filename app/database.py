@@ -44,11 +44,11 @@ def initialiser_db():
         # Vérifie si la table est déjà peuplée
         if session.query(Users).count() == 0:
             # Créer des instances de vos modèles
-            beer_1 = Beers(id = str(uuid4()), name="Lager", brewery="Brewery A", price= 3.5, stock = 100, description = "A smooth and crisp lager.")
-            beer_2 = Beers(id = str(uuid4()), name="IPA", brewery="Brewery B", price= 4.2, stock = 50, description = "A hoppy and bitter IPA.")
-            beer_3 = Beers(id = str(uuid4()), name="Stout", brewery="Brewery C", price= 5.0, stock = 30, description = "A rich and creamy stout.")
-            beer_4 = Beers(id = str(uuid4()), name="Pilsner", brewery="Brewery D", price= 3.8, stock = 80, description = "A light and refreshing pilsner.")
-            beer_5 = Beers(id = str(uuid4()), name="Wheat Beer", brewery="Brewery E", price= 4.5, stock = 50, description = "A fruity and spicy wheat beer.")
+            beer_1 = Beers(id = str(uuid4()), name="Lager", brewery="Brewery A", price= 3.5, stock = 100, description = "A smooth and crisp lager.", image="./static/lager.png")
+            beer_2 = Beers(id = str(uuid4()), name="IPA", brewery="Brewery B", price= 4.2, stock = 50, description = "A hoppy and bitter IPA.",  image="./static/ipa.jpg")
+            beer_3 = Beers(id = str(uuid4()), name="Stout", brewery="Brewery C", price= 5.0, stock = 30, description = "A rich and creamy stout.",  image="./static/stout.jpg")
+            beer_4 = Beers(id = str(uuid4()), name="Pilsner", brewery="Brewery D", price= 3.8, stock = 80, description = "A light and refreshing pilsner.",  image="./static/pilsner.png")
+            beer_5 = Beers(id = str(uuid4()), name="Wheat Beer", brewery="Brewery E", price= 4.5, stock = 50, description = "A fruity and spicy wheat beer.",  image="./static/wheatbeer.jpg")
 
             password_1="Admin!123"
             password_2 = "Password!123"
@@ -62,9 +62,10 @@ def initialiser_db():
 
             admin_1 = Admins(id=1, user_id=user_1.id)
 
-            user_1.beer.append(beer_1)
-            user_1.beer.append(beer_2)
-            user_2.beer.append(beer_3)
+            user_1.beers.append(beer_1)
+            user_1.beers.append(beer_2)
+            user_2.beers.append(beer_3)
+            user_2.beers.append(beer_5)
             
             # Ajouter les nouveaux objets à la session
             session.add(beer_1)

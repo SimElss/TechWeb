@@ -1,11 +1,12 @@
 {% extends "index.html"%}
 {% block content %}
-
+<div class='grid text-center mb-5 border-bottom border-4' style="color :#BA4A00;font-size: 125px; text-decoration: none; font-family: 'Brush Script MT', cursive;">
+    BuyBeer
+</div>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-4">
-            <h2 class="text-center">Connexion</h2>
-            <form action="/login" method="post">
+            <form action="/login" method="post" class="grid text-center">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" class="form-control" id="email" name="email" required>
@@ -14,7 +15,7 @@
                     <label for="password" class="form-label">Mot de passe</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Se connecter</button>
+                <button type="submit" class="btn btn-outline-dark mb-5">Se connecter</button>
             </form>
             <p class="text-center">Pas encore de compte ? <a href="/register">Inscrivez-vous</a></p>
             <p class="text-center">Changer de mot de passe ? <a href="/new_mdp">Réinitialisez-le</a></p>
