@@ -1,13 +1,13 @@
 from typing import Annotated, Optional
 from uuid import uuid4
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends
 from ..login_manager import login_manager
-from ..services.beers import get_all_beers, delete_beer, modify_beer, save_beers, get_number_beers, get_beer_by_id, add_owner, get_number_beers_client
+from ..services.beers import is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, save_beers, get_number_beers, get_beer_by_id, add_owner, get_number_beers_client
 from ..services.users import get_beer_owners, get_user_by_beer
 from ..schemas.users import UserSchema
 from ..schemas.beers import Beer
 from fastapi import APIRouter, status, Request, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 # Create APIRouter instance for beer-related routes
@@ -42,9 +42,10 @@ def error(request: Request, description: str, url: str):
 def list_beers(request: Request, user: UserSchema = Depends(login_manager.optional)):
     beers = get_all_beers()
     nb = get_number_beers()
+    nbUser = get_number_beers_of_user(user.id)
     return templates.TemplateResponse(
-        "beers.html", 
-        context={'request': request,'Nombre': nb, 'current_user': user, 'beers': beers}
+        "beers.html",
+        context={'request': request,'Nombre': nb, 'nb' : nbUser , 'current_user': user, 'beers': beers}
     )
 
 # Route to delete a beer
@@ -139,8 +140,28 @@ def buy(id: str, user = Depends(login_manager.optional)):
         error = status.HTTP_404_NOT_FOUND
         description = f"Error {error}: No beer found with this ID"
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
-    #change the status of the beer to bought
-    modify_beer(id, True)
+     # Check if the beer is already in the user's cart
+    if is_beer_in_cart(beer.id, user.id):
+        # Beer is already in the cart, display a message
+        description = "Cette article est déjà dans votre panier"
+        return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
+
     #add the user as owner of the beer
     add_owner(id, user.id)
+    return RedirectResponse(url="/liste", status_code=302)
+
+# Route to delete a beer
+@router.post("/deletepanier/{id}")
+def delete(id: str, user = Depends(login_manager.optional)):
+    #We verify that the user is connected
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    #We verify that the beer exists
+    beer = get_beer_by_id(id)
+    if beer is None:
+        error = status.HTTP_404_NOT_FOUND
+        description = f"Error {error}: No beer found with this ID"
+        return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
+    #add the user as owner of the beer
+    drop_beer_panier(id, user.id)
     return RedirectResponse(url="/liste", status_code=302)

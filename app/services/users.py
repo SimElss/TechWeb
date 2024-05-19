@@ -4,7 +4,7 @@ import hashlib
 
 from ..schemas.users import UserSchema, AdminSchema
 from ..database import Session
-from ..models.models import Users, Admins, Beers, association_table
+from ..models.models import Users, Admins, Beers, association_table, CartItem
 from ..errors import ChangeMdpError
 
 
@@ -282,3 +282,35 @@ def get_user_by_beer(beer_id:str):
         if user is not None:
             return user[0]
     return None
+def drop_beer_panier(beer_id, user_id):
+    """
+    This function removes a beer from the user's cart.
+
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer.
+    user_id : str
+        The ID of the user.
+
+    Returns:
+    --------
+    bool
+        True if the operation was successful, False otherwise.
+    """
+    with Session() as session:
+        try:
+            # Fetch the CartItem to be removed
+            statement = select(CartItem).filter_by(beer_id=beer_id, user_id=user_id)
+            cart_item = session.scalar(statement)
+            if cart_item:
+                session.delete(cart_item)
+                session.commit()
+                return True
+            else:
+                print(f"No cart item found for beer_id={beer_id} and user_id={user_id}")
+                return False
+        except Exception as e:
+            print(f"Error removing beer from cart: {e}")
+            session.rollback()
+            return False

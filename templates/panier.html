@@ -33,7 +33,7 @@
                 {% endif %}
                     <li class="nav-item dropdown" >
                         <a class="nav-link dropdown-toggle " style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Bonjour Mr/Mlle {{current_user.name}}
+                           [{{nb}}] Bonjour Mr/Mlle {{current_user.name}}
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/panier">Panier</a></li>
@@ -57,16 +57,18 @@
 
     <div class="container">
     <h5 class="grid text-center mb-5" style=" color: #BA4A00"> Récapitulatif de votre panier </h5>
-        <table class="table table-hover">
+        <table class="table table-hover text-center" style="height: 150px; vertical-align: middle;">
             <tr>
+                <th>a</th>
                 <th>Name</th>
                 <th>Brewery</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Quantity</th>
+                <th>Retirer<th>
             </tr>
             {% for beer in beers %}
-                {{ show_beers(beer.name, beer.brewery ,beer.price , beer.stock, beer.quantity) }}
+                {{ show_beers(beer.id, beer.name, beer.brewery ,beer.price , beer.stock, beer.quantity) }}
             {% endfor%}
             
         </table>

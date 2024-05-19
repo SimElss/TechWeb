@@ -3,7 +3,7 @@ from sqlalchemy import select, func
 
 from ..schemas.beers import Beer
 from ..database import Session
-from ..models.models import Beers, Users, association_table
+from ..models.models import Beers, Users, CartItem, association_table
 
 
 def save_beers(new_beer: Beers, user_id: str):
@@ -78,7 +78,8 @@ def get_beer_by_id(id: str):
                 brewery=beer.brewery,
                 price=beer.price,
                 stock=beer.stock,
-                description=beer.description
+                description=beer.description,
+                image=beer.image
             )
     return None
 
@@ -249,7 +250,106 @@ def add_owner(beer_id, user_id):
         beer = session.scalar(statement)
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
-        beer.user.append(user)
-        beer.new_owner_id = user_id
+        beer.users.append(user)
         session.commit()
         return True
+def drop_beer_panier(beer_id,user_id):
+    """
+    This function delete the beer corresponding to id
+
+    Parameters:
+    -----------
+    beer_id : the id of the beer which will be deleted (str)
+
+    Return :
+    --------
+    1 : to check if the beer has been deleted (int)
+    None : if we find no beer corresponding to the id (NoneTypeObject)
+    """
+    with Session() as session:
+        # Requête pour récupérer la bière
+        statement = select(Beers).filter_by(id=beer_id)
+        beer = session.scalar(statement)
+        # Requête pour récupérer l'utilisateur
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        
+        # Vérifie que la bière et l'utilisateur existent
+        if beer is not None and user is not None:
+            # Supprime l'utilisateur de la liste des utilisateurs de la bière
+            if user in beer.users:
+                beer.users.remove(user)
+                session.commit()
+                return True
+        return True
+
+def add_to_cart(beer_id: str, user_id: str):
+    """
+    This function adds a beer to the user's cart.
+    
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer.
+    user_id : str
+        The ID of the user.
+    """
+    with Session() as session:
+        try:
+            # Check if the cart item already exists
+            statement = select(CartItem).filter_by(beer_id=beer_id, user_id=user_id)
+            cart_item = session.scalar(statement)
+            if cart_item:
+                # If the item already exists, you might want to update the quantity or notify the user
+                print("Beer already in cart.")
+                return False
+            
+            # Create a new cart item
+            new_cart_item = CartItem(beer_id=beer_id, user_id=user_id)
+            session.add(new_cart_item)
+            session.commit()
+            return True
+        except Exception as e:
+            print(f"Error adding beer to cart: {e}")
+            session.rollback()
+            return False
+
+def is_beer_in_cart(beer_id: str, user_id: str) -> bool:
+    """
+    Check if the given beer is already in the user's cart.
+
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer to check.
+    user_id : str
+        The ID of the user whose cart to check.
+
+    Returns:
+    --------
+    bool
+        True if the beer is in the user's cart, False otherwise.
+    """
+    with Session() as session:
+        # Query the association table to check if the beer is in the user's cart
+        statement = select(association_table).filter_by(user_id=user_id, beer_id=beer_id)
+        result = session.execute(statement)
+        return result.scalar() is not None
+    
+def get_price_cart(user_id: str) -> float:
+    """
+    This function returns the total price of beers owned by a user
+
+    Parameters:
+    -----------
+    user_id : the id of the user (str)
+
+    Return :
+    --------
+    total_price : the total price of the user's beers (float)
+    """
+    with Session() as session:
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        total_price = sum(beer.price for beer in user.beers)
+        return total_price

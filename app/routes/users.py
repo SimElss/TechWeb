@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from ..services.users import add_user, get_all_users, get_user_by_id, set_user_group, set_user_whitelist, get_user_by_email, change_user_password, modifify_user_profile, get_beer_owners
-from ..services.beers import get_beer_by_user, get_number_beers_of_user
+from ..services.beers import get_beer_by_user, get_number_beers_of_user, get_price_cart
 from fastapi import status, Depends, Form
 from ..login_manager import login_manager
 from fastapi.responses import RedirectResponse
@@ -233,6 +233,7 @@ def block(user_id: str):
 # Route for profile
 @user_router.get('/profile')
 def profile(request: Request, user: UserSchema = Depends(login_manager)):
+    nbUser = get_number_beers_of_user(user.id)
     #Check if user is connected
     if user is None :
         return RedirectResponse(url="/liste", status_code=302)
@@ -244,7 +245,7 @@ def profile(request: Request, user: UserSchema = Depends(login_manager)):
     profile = True
     return templates.TemplateResponse(
         "profile.html", 
-        context={'request': request, 'current_user': user, 'in_profile':profile,}
+        context={'request': request, 'current_user': user, 'in_profile':profile, 'nb': nbUser}
     )
 # Route for profile
 @user_router.get('/panier')
@@ -260,10 +261,11 @@ def profile(request: Request, user: UserSchema = Depends(login_manager)):
     profile = True
     beers = get_beer_by_user(user.id)
     nb = get_number_beers_of_user(user.id)
+    cart = get_price_cart(user.id)
 
     return templates.TemplateResponse(
         "panier.html", 
-        context={'request': request, 'current_user': user, 'beers':beers,'in_profile':profile, 'nb':nb}
+        context={'request': request, 'current_user': user, 'cart':cart, 'beers':beers,'in_profile':profile, 'nb':nb}
     )
 
 # Route for modifying profile (POST request)
