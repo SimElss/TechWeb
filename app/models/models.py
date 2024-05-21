@@ -1,4 +1,5 @@
-from sqlalchemy import Table, Column, String, Integer, ForeignKey, Float, Boolean
+from datetime import datetime
+from sqlalchemy import DateTime, Table, Column, String, Integer, ForeignKey, Float, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -18,6 +19,7 @@ class CartItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     beer_id = Column(Integer, ForeignKey('beers.id'))
+    quantity = Column(Integer,nullable= False)
 
     # Relationship with Users and Beers
     user = relationship("Users", back_populates="cart_items")
@@ -61,4 +63,27 @@ class Users(Base):
     )
     admin: Mapped["Admins"] = relationship()
     cart_items = relationship("CartItem", back_populates="user")
+    orders = relationship("Order", back_populates="user")
 
+class Order(Base):
+    __tablename__ = 'orders'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    total_price = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    user = relationship("Users", back_populates="orders")
+    order_items = relationship("OrderItem", back_populates="order")
+
+class OrderItem(Base):
+    __tablename__ = 'order_items'
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    beer_id = Column(Integer, ForeignKey('beers.id'))
+    quantity = Column(Integer)
+    price = Column(Float)
+    
+    order = relationship("Order", back_populates="order_items")
+    beer = relationship("Beers")

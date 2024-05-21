@@ -37,6 +37,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/panier">Panier</a></li>
+                            <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-dark" type="submit" >Se déconnecter</button>
                                 <!-- Logout button -->
@@ -59,7 +60,7 @@
     <h5 class="grid text-center mb-5" style=" color: #BA4A00"> Récapitulatif de votre panier </h5>
         <table class="table table-hover text-center" style="height: 150px; vertical-align: middle;">
             <tr>
-                <th>a</th>
+                <th></th>
                 <th>Name</th>
                 <th>Brewery</th>
                 <th>Price</th>
@@ -67,15 +68,17 @@
                 <th>Quantity</th>
                 <th>Retirer<th>
             </tr>
-            {% for beer in beers %}
-                {{ show_beers(beer.id, beer.name, beer.brewery ,beer.price , beer.stock, beer.quantity) }}
+            {% for item in beers %}
+                {{ show_beers(item.beer.id, item.beer.name, item.beer.brewery, item.beer.price, item.beer.stock, item.beer.description, item.quantity) }}
             {% endfor%}
             
         </table>
         <h5 class="grid text-end" style="font-size: 15px;"> Nombres d'articles dans le panier : {{nb}} </h5>
 
         <div class="grid text-center" style="margin-top: 50px; margin-bottom: 50px;">
-            <a href="/paiement"><button type="button" class="btn btn-outline-dark" style=" width: 50%">Payer le panier</button></a>
+            <form action="/paiement" method="POST">
+                <button type="submit" class="btn btn-outline-dark" style="width: 50%">Payer le panier</button>
+            </form>
         </div>
     </div>
 {% endblock %}

@@ -3,7 +3,7 @@ from sqlalchemy import select, func
 
 from ..schemas.beers import Beer
 from ..database import Session
-from ..models.models import Beers, Users, CartItem, association_table
+from ..models.models import Beers, Order, OrderItem, Users, CartItem, association_table
 
 
 def save_beers(new_beer: Beers, user_id: str):
@@ -216,9 +216,9 @@ def get_number_beers_of_user(user_id: str) -> int:
         count = len(user.beers)
         return count
 
-def get_beer_by_user(user_id: str) -> list[Beers]:
+def get_beer_by_user(user_id: str) -> list[dict]:
     """
-    This function returns the list of beers of a user
+    This function returns the list of beers and their quantities in the cart of a user.
 
     Parameters:
     -----------
@@ -226,14 +226,21 @@ def get_beer_by_user(user_id: str) -> list[Beers]:
 
     Return :
     --------
-    beers_data : the list of beers of the user (list of Object Beer)
+    beers_data : the list of beers with their quantities (list of dict)
     """
     with Session() as session:
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
-        beers = user.beers
+        cart_items = session.query(CartItem).filter_by(user_id=user_id).all()
 
-        return beers
+        beers_data = [
+            {
+                "beer": session.query(Beers).filter_by(id=item.beer_id).first(),
+                "quantity": item.quantity
+            } for item in cart_items
+        ]
+
+        return beers_data
     
 def add_owner(beer_id, user_id):
     """
@@ -305,7 +312,7 @@ def add_to_cart(beer_id: str, user_id: str):
                 return False
             
             # Create a new cart item
-            new_cart_item = CartItem(beer_id=beer_id, user_id=user_id)
+            new_cart_item = CartItem(beer_id=beer_id, user_id=user_id, quantity=1)
             session.add(new_cart_item)
             session.commit()
             return True
@@ -353,3 +360,94 @@ def get_price_cart(user_id: str) -> float:
         user = session.scalar(statement)
         total_price = sum(beer.price for beer in user.beers)
         return total_price
+    
+def paid_cart(user_id: str):
+    """
+    Cette fonction gère le paiement du panier et ajoute la commande à l'historique.
+
+    Paramètres :
+    ------------
+    user_id : str
+        L'ID de l'utilisateur.
+
+    Retour :
+    --------
+    bool
+        True si le paiement est réussi, False sinon.
+    """
+    with Session() as session:
+        # Récupérer les articles du panier de l'utilisateur
+        cart_items = session.query(CartItem).filter_by(user_id=user_id).all()
+        
+        if not cart_items:
+            return False
+        
+        # Calculer le prix total
+        total_price = sum(item.quantity * item.beer.price for item in cart_items)
+        
+        # Créer une nouvelle commande
+        new_order = Order(user_id=user_id, total_price=total_price)
+        session.add(new_order)
+        session.commit()
+        session.refresh(new_order)
+        
+        # Ajouter les articles de la commande
+        for item in cart_items:
+            order_item = OrderItem(
+                order_id=new_order.id,
+                beer_id=item.beer_id,
+                quantity=item.quantity,
+                price=item.beer.price
+            )
+            session.add(order_item)
+        
+        # Supprimer les articles du panier
+        for item in cart_items:
+            session.delete(item)
+        
+        session.commit()
+        
+        return True
+    
+def get_orders_by_user(user_id: str) -> list[dict]:
+    """
+    Cette fonction retourne la liste des commandes et leurs articles pour un utilisateur donné.
+
+    Paramètres:
+    -----------
+    user_id : str
+        L'ID de l'utilisateur.
+
+    Retour:
+    -------
+    orders_data : list[dict]
+        La liste des commandes avec leurs articles et quantités.
+    """
+    with Session() as session:
+        # Requête pour récupérer l'utilisateur et ses commandes
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        
+        if user is None:
+            return []
+        
+        orders = user.orders
+        orders_data = [
+            {
+                "order_id": order.id,
+                "total_price": order.total_price,
+                "created_at": order.created_at,
+                "items": [
+                    {
+                        "beer_id": item.beer_id,
+                        "beer_name": item.beer.name,
+                        "quantity": item.quantity,
+                        "price": item.price
+                    }
+                    for item in order.order_items
+                ]
+            }
+            for order in orders
+        ]
+        
+        return orders_data

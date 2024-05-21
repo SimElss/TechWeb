@@ -1,8 +1,12 @@
+from multiprocessing.resource_tracker import getfd
 from typing import Annotated, Optional
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status, Depends
+
+from app.database import Session
+from app.models.models import Order
 from ..login_manager import login_manager
-from ..services.beers import is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, save_beers, get_number_beers, get_beer_by_id, add_owner, get_number_beers_client
+from ..services.beers import add_to_cart, get_orders_by_user, is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, paid_cart, save_beers, get_number_beers, get_beer_by_id, add_owner, get_number_beers_client
 from ..services.users import get_beer_owners, get_user_by_beer
 from ..schemas.users import UserSchema
 from ..schemas.beers import Beer
@@ -148,6 +152,7 @@ def buy(id: str, user = Depends(login_manager.optional)):
 
     #add the user as owner of the beer
     add_owner(id, user.id)
+    add_to_cart(id, user.id)
     return RedirectResponse(url="/liste", status_code=302)
 
 # Route to delete a beer
@@ -165,3 +170,25 @@ def delete(id: str, user = Depends(login_manager.optional)):
     #add the user as owner of the beer
     drop_beer_panier(id, user.id)
     return RedirectResponse(url="/liste", status_code=302)
+
+@router.post('/paiement')
+def payer_panier_route(request: Request, user: UserSchema = Depends(login_manager)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    if paid_cart(user.id):
+        return RedirectResponse(url="/order", status_code=302)
+    else:
+        return RedirectResponse(url="/panier", status_code=302)
+    
+@router.get('/order')
+def historique(request: Request, user: UserSchema = Depends(login_manager)):
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    orders = get_orders_by_user(user.id)
+    
+    return templates.TemplateResponse(
+        "order.html", 
+        context={'request': request, 'current_user': user, 'orders': orders}
+    )

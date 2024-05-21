@@ -13,7 +13,7 @@ Session = sessionmaker(engine)
 class Base(DeclarativeBase):
     pass
 
-from app.models.models import Base, Users, Beers, Admins, association_table
+from app.models.models import Base, Users, Beers, Admins, association_table, CartItem
 
 def create_database():
     Base.metadata.create_all(engine)
@@ -29,6 +29,7 @@ def vider_db():
         session.query(Beers).delete()
         session.query(Admins).delete()
         session.query(Admins).delete()
+        session.query(CartItem).delete()
         session.query(association_table).delete()
         # Ajoutez des lignes similaires pour d'autres tables si nécessaire
         
@@ -61,12 +62,19 @@ def initialiser_db():
             user_2 = Users(id= str(uuid4()),username= "User2", name= "Doe", surname= "John", password= hashed_password_2, email= "user@gmail.com", group= "client", whitelist= True)
 
             admin_1 = Admins(id=1, user_id=user_1.id)
+            # Associez les bières aux utilisateurs via le panier
+            cart_item_1 = CartItem(user_id=user_1.id, beer_id=beer_1.id, quantity=7)
+            cart_item_2 = CartItem(user_id=user_1.id, beer_id=beer_2.id, quantity=1)
+            cart_item_3 = CartItem(user_id=user_2.id, beer_id=beer_3.id, quantity=2)
+            cart_item_4 = CartItem(user_id=user_2.id, beer_id=beer_5.id, quantity=5)
 
+        
+            # Associez les bières aux utilisateurs via le panier
             user_1.beers.append(beer_1)
             user_1.beers.append(beer_2)
             user_2.beers.append(beer_3)
             user_2.beers.append(beer_5)
-            
+
             # Ajouter les nouveaux objets à la session
             session.add(beer_1)
             session.add(beer_2)
@@ -76,8 +84,11 @@ def initialiser_db():
 
             session.add(user_1)
             session.add(user_2)
-
             session.add(admin_1)
-            
+
+            session.add(cart_item_1)
+            session.add(cart_item_2)
+            session.add(cart_item_3)
+            session.add(cart_item_4)            
             # Commit la session pour sauvegarder les données dans la base de données
             session.commit()
