@@ -1,53 +1,86 @@
 {% extends "index.html" %}
-{% from "beer_macro.html" import show_beers %}
 {% block content %}
-<ul class="nav nav-tabs justify-content-center" style=" padding-right: 2%; padding-left: 7%;">
-    <li class="nav-item" style="margin-left: auto;">
-        <form action="/logout" method="post" >
-            <button class="btn btn-danger" type="submit" >Se déconnecter</button>
-            <!-- Logout button -->
-        </form>
-    </li>
-</ul><br>
+<nav class="navbar navbar-expand-lg z-3 bg-white" style="height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid  bg-white" style="border-bottom: solid; padding-bottom: 10px; padding-right: 80px; padding-left: 30px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand" style="margin-right: 20px; color: #BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse fs-4 bg-white" style="margin-left: 75px;" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item ms-4">
+                    <a class="nav-link active" href="/liste">Accueil</a>
+                </li>
+                <li class="nav-item ms-4">
+                    <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
+                </li> 
+                <li class="nav-item ms-4">
+                    <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">           
+                <li class="nav-item dropdown bg-white">
+                    <a class="nav-link dropdown-toggle" style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bonjour administrateur
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/panier">Panier</a></li>
+                        <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="/logout" method="post" class="dropdown-item">
+                                <button class="btn btn-outline-dark" type="submit">Se déconnecter</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
-    <!-- Container for modifying beer -->
-    <h2 class="display-6 text-center">Modifier la bière</h2><br>
-    <!-- Title for modifying beer section -->
-    <form action="/modify/{{beer.id}}" method="post">
-        <!-- Form for modifying beer -->
+    <form action="/modify/{{beer.id}}" method="post" class="container" style="height: 600px;">
+        <h1 class="display-6 text-center">Modifier une bière</h1><br>
+    
         <div class="input-group mb-3">
-            <!-- Form group for beer name -->
-            <label for="beer_name" class="input-group-text">Nom</label>
-            <input type="text" id="beer_name" class="form-control" name="name" value="{{beer.name}}" required="true"/>
+            <label for="beer_name" class="input-group-text">Nom de la bière</label>
+            <input type="text" id="beer_name" class="form-control"
+                   name="name" placeholder="Orval" required="true"/>
         </div>
+    
         <div class="input-group mb-3">
-            <!-- Form group for beer author -->
-            <label for="beer_author" class="input-group-text">Auteur</label>
-            <input type="text" id="beer_author" class="form-control" name="Author" required="true" value="{{beer.Author}}"/>
+            <label for="beer_brewery" class="input-group-text">Brewery</label>
+            <input type="text" id="beer_brewery" class="form-control"
+                   name="brewery" required="true" placeholder="Orval Brewery"/>
         </div>
-        <!-- End of beer author form group -->
+    
         <div class="input-group mb-3">
-            <!-- Form group for beer editor -->
-            <label for="beer_editor" class="input-group-text">Editeur</label>
-            {%if beer.Editor != None%}
-            <input type="text" id="beer_editor" class="form-control" name="Editor" value="{{beer.Editor}}"/>
-            {%else%}
-            <input type="text" id="beer_editor" class="form-control" name="Editor" value=""/>
-            {%endif%}
+            <label for="beer_price" class="input-group-text">Price</label>
+            <input type="number" id="beer_price" class="form-control"
+                   name="price" required="true" placeholder="4.2" min="0" step="0.01" />
         </div>
+    
         <div class="input-group mb-3">
-            <!-- Form group for beer author -->
-            <label for="beer_price" class="input-group-text">Prix</label>
-            <input type="number" id="beer_price" class="form-control" name="price" required="true" value="{{beer.price}}" min="0"/>
+            <label for="beer_stock" class="input-group-text">Stock</label>
+            <input type="number" id="beer_stock" class="form-control"
+                   name="stock" required="true" placeholder="24" min="0"/>
         </div>
-        <!-- End of beer editor form group -->
-        <div class="grid text-center">
-            <!-- Button group -->
-            <a href="/liste"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
-            <button type="submit" class="btn btn-outline-dark">Confirmer</button>
+    
+        <div class="input-group mb-3">
+            <label for="beer_description" class="input-group-text">Description</label>
+            <input type="text" id="beer_description" class="form-control"
+                   name="description" placeholder="Une bière avec un magnifique goût pour toute personne voulant se détendre"/>
         </div>
+    
+        <div class="d-flex justify-content-between">
+            <div>
+                <a href="/profile"><button type="button" class="btn btn-outline-dark">Annuler</button></a>
+                <button type="submit" class="btn btn-outline-dark">Confirmer</button>
+            </div>
+        </div>    
     </form>
+    
 </div>
 
 {% endblock %}

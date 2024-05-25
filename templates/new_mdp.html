@@ -1,5 +1,55 @@
 {%extends "index.html"%}
 {% block content %}
+<nav class="navbar navbar-expand-lg z-3 bg-white" style="height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid  bg-white" style="border-bottom: solid; padding-bottom: 10px; padding-right: 80px; padding-left: 30px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand" style="margin-right: 20px; color: #BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse fs-4 bg-white" style="margin-left: 75px;" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if current_user != None %}
+                    <li class="nav-item ms-4">
+                        <a class="nav-link active" href="/liste">Accueil</a>
+                    </li>
+                    <li class="nav-item ms-4">
+                        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
+                    </li>
+                    {% if current_user.group == "admin" %}
+                        <li class="nav-item ms-4">
+                            <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if current_user != None %}
+                    <li class="nav-item dropdown bg-white">
+                        <a class="nav-link dropdown-toggle" style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <b>[{{nb}}] </b> Bonjour Mr/Mlle {{current_user.name}}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/panier">Panier [{{nb}}]</a></li>
+                            <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="/logout" method="post" class="dropdown-item">
+                                    <button class="btn btn-outline-dark" type="submit">Se déconnecter</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+    </div>
+</nav>
 
 <div class="container border rounded-4 border-2 p-4 mb-4 border-opacity-75" style=" width: 50%">
     <h2 class="display-6 text-center">Changement de mot de passe</h2><br>

@@ -1,102 +1,83 @@
 {% extends "index.html" %}
 {% from "beers_macro.html" import show_beers %}
 {% block content %}
-<nav class="navbar navbar-expand-lg " style=" height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
-    <div class="container-fluid border-bottom border-4" style=" padding-bottom: 10px; padding-left: 20px; border-color: #BA4A00;">
-        <a href="/liste" class="navbar-brand " style=" margin-right: 50px; color :#BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+<nav class="navbar navbar-expand-lg z-3 bg-white" style="height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid  bg-white" style="border-bottom: solid; padding-bottom: 10px; padding-right: 80px; padding-left: 30px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand" style="margin-right: 20px; color: #BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Link to home page -->
-        <div class="collapse navbar-collapse fs-5" style="margin-left: 75px;" id="navbarNav">
-            <ul class="navbar-nav end-0" >
-                <!-- Navigation tabs -->
-                {%if current_user != None%}
-                <!-- Check if the current user is an admin -->
-                    <li class="nav-item ">
-                    <a class="nav-link active " href="/liste">Accueil</a>
-                    <!-- Link to home page -->
+        <div class="collapse navbar-collapse fs-4 bg-white" style="margin-left: 75px;" id="navbarNav">
+            <ul class="navbar-nav">
+                    <li class="nav-item ms-4">
+                        <a class="nav-link active" href="/liste">Accueil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link link-body-emphasis" style="margin-right: 600px;" href="/profile">Profil</a>
-                        <!-- Link to profile page -->
+                    <li class="nav-item ms-4">
+                        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
                     </li>
-                {% if current_user.group == "admin" %}
-                    <li class="nav-item">
-                        <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
-                        <!-- Link to admin page -->
-                    </li>
-                    <br>
-                    <!-- Line break -->
-                </div>
-                
-                {% endif %}
-                    <li class="nav-item dropdown" >
-                        <a class="nav-link dropdown-toggle " style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           [{{nb}}] Bonjour Mr/Mlle {{current_user.name}}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/panier">Panier</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-dark" type="submit" >Se déconnecter</button>
-                                <!-- Logout button -->
-                                </form></a>
-                            </li>
-                        </ul>
-                    </li>
-                {%else%}
-                    <li class="nav-item" style="margin-left: auto;">
-                        <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
-                        <!-- Link to login page -->
-                    </li>
-                {%endif%}
+                    {% if current_user.group == "admin" %}
+                        <li class="nav-item ms-4">
+                            <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                        </li>
+                    {% endif %}
             </ul>
-        
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown bg-white">
+                    <a class="nav-link dropdown-toggle" style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <b>[{{nb}}] </b> Bonjour Mr/Mlle {{current_user.name}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/panier">Panier [{{nb}}]</a></li>
+                        <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="/logout" method="post" class="dropdown-item">
+                                <button class="btn btn-outline-dark" type="submit">Se déconnecter</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 
 <div class="container">
-    <h1>Historique des commandes de {{ current_user.username }}</h1>
-    <table class="table table-hover text-center" style="height: 150px; vertical-align: middle;">
+    <h3 class="grid text-center mb-5 p-3" style=" color: #BA4A00"> Historique des commandes de {{ current_user.name }}</h5>
+    <table class="table table-hover text-center" style="height: 300px;">
         <thead>
             <tr>
                 <th>ID Commande</th>
                 <th>Date</th>
                 <th>Prix Total</th>
-                <th>Détails</th>
             </tr>
         </thead>
         <tbody>
             {% for order in orders %}
                 <tr>
                     <td>{{ order.order_id }}</td>
-                    <td>{{ order.created_at }}</td>
-                    <td>{{ order.total_price }}</td>
-                    <td>
-                        <table class="table table-hover text-center">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Brewery</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in order.items %}
-                                    <tr>
-                                        <td>{{ item.beer.name }}</td>
-                                        <td>{{ item.beer.brewery }}</td>
-                                        <td>{{ item.beer.price }}</td>
-                                        <td>{{ item.quantity }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </td>
+                    <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ order.total_price }} €</td>
                 </tr>
+
             {% endfor %}
+            
         </tbody>
     </table>
+    <div class="grid text-center mt-5 mb-5">
+        <form action="/orderdetail/" method="get">
+            <button class="btn btn-outline-dark" type="submit"> 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-down" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                    <path fill-rule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                  </svg>
+                Détails des commandes
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-down" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                    <path fill-rule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                  </svg>
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

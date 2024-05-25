@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import select, func
 
 
@@ -6,54 +7,30 @@ from ..database import Session
 from ..models.models import Beers, Order, OrderItem, Users, CartItem, association_table
 
 
-def save_beers(new_beer: Beers, user_id: str):
-    """
-    This function is used to save beers
-
-    Parameters :
-    ------------
-    new_beer : the beer object which will be saved in database (Object beer)
-
-    Return :
-    --------
-    None : If informations ar invalid (NoneTypeObject)
-    new_beer : the beer saved  (Object Beer)
-    """
+# Fonction pour sauvegarder les bières
+def save_beers(new_beer: Beer):
+    from app.database import Session, Beers
     with Session() as session:
-        #We strip if a user includes tab or space at the end or the begining not on purpose 
-        new_beer.id = new_beer.id.strip('\t')
-        new_beer.id= new_beer.id.strip(" ")
-        new_beer.name= new_beer.name.strip('\t')
-        new_beer.name= new_beer.name.strip(" ")
-        new_beer.Author= new_beer.Author.strip('\t')
-        new_beer.Author= new_beer.Author.strip(" ")
+        new_beer.id = new_beer.id.strip()
+        new_beer.name = new_beer.name.strip()
+        new_beer.brewery = new_beer.brewery.strip()
+        new_beer.description = new_beer.description.strip()
 
-        #Check if Editor has a value (cause optionam)
-        if new_beer.Editor != None:
-            new_beer.Editor= new_beer.Editor.strip('\t')
-            new_beer.Editor= new_beer.Editor.strip(" ")
-
-        #Check if informations are valid
-        if new_beer.id == "" or new_beer.name == "" or new_beer.Author == "":
+        if not new_beer.id or not new_beer.name or not new_beer.brewery:
             return None
-        
-        #On remplit le modèle
+
         new_beer_entity = Beers(
             id=new_beer.id,
             name=new_beer.name,
-            Author = new_beer.Author, 
-            Editor = new_beer.Editor,
-            price = new_beer.price,
-            bought = new_beer.bought,
-            new_owner_id = new_beer.new_owner_id
+            brewery=new_beer.brewery,
+            price=new_beer.price,
+            stock=new_beer.stock,
+            description=new_beer.description,
+            image=new_beer.image
         )
-        session.add(new_beer_entity)#add beer to database
-
-        user = session.query(Users).filter_by(id=user_id).first()
-        user.beer.append(new_beer_entity)
-
+        session.add(new_beer_entity)
         session.commit()
-        return True
+        return new_beer_entity
 
 def get_beer_by_id(id: str):
     """"
@@ -109,65 +86,56 @@ def get_all_beers() -> list[Beer]:
         ]
 
 
-def delete_beer(beer_id: str) -> None:
-    """
-    This function delete the beer corresponding to id
-
-    Parameters:
-    -----------
-    beer_id : the id of the beer which will be deleted (str)
-
-    Return :
-    --------
-    1 : to check if the beer has been deleted (int)
-    None : if we find no beer corresponding to the id (NoneTypeObject)
-    """
-    beer_id = beer_id.strip(" ")
-    beer_id = beer_id.strip('\t')
+def delete_beer(beer_id: str):
     with Session() as session:
-         statement = select(Beers).filter_by(id=beer_id)
-         beer = session.scalar(statement)
-         if beer is not None:
-            session.delete(beer)
-            session.commit()
-            return True
-    return None
-
-def modify_beer(beer_id: str, name:str = None, brewery:str = None, price:float = None):
+        statement = select(Beers).filter_by(id=beer_id)
+        result = session.execute(statement)
+        beer = result.fetchone()
+        if beer is None:
+            return None
+        session.delete(beer[0])  # Accédez à la première colonne (0) qui contient l'objet Beer
+        session.commit()
+        return True
+    
+def add_owner(beer_id, user_id):
     """
-    This function modifies a beer
+    This function adds an owner to a beer
+    We don't delete the previous owner because he can view his sold beers
 
     Parameters:
     -----------
-    beer_id : the id of the beer which will be modified (str)
-    name : new name of the beer (str)
-    Author : new Author of the beer
-    Editor : new Editor  of the beer | values "" if no Editor | str
-
-    Return:
-    -------
-    None : if informations are invalid (NoneTypeObject)
-    0 : if beer has been modified (int)
-    1 : if no beer has been find using beer_id
+    beer_id : the id of the beer (str)
+    user_id : the id of the user (str)
     """
-    if name != None and brewery != None and price != None:
-        name = name.strip(" ")
-        name = name.strip('\t')
-        brewery = brewery.strip(" ")
-        brewery = brewery.strip('\t')
-        if name == "" or brewery == "":
-            return None
-        with Session() as session:
-            statement = select(Beers).filter_by(id=beer_id)
-            beer = session.scalar(statement)
-            if beer is not None:
-                beer.name=name
-                beer.brewery=brewery
-                beer.price=price
+    with Session() as session:
+        statement = select(Beers).filter_by(id=beer_id)
+        beer = session.scalar(statement)
+        statement = select(Users).filter_by(id=user_id)
+        user = session.scalar(statement)
+        beer.users.append(user)
+        session.commit()
+        return True
+    
+def modify_beer(beer_id: str, image: Optional[str], name: str, brewery: str, price: float, stock: int, description: Optional[str]):
+    
+    with Session() as session:
+        statement = select(Beers).filter_by(id=beer_id)
+        beer = session.scalar(statement)
+        
+        if beer is None:
+            return 1  # No beer found with this ID
+        
+        # Update fields
+        beer.name = name.strip() if name.strip() else beer.name
+        beer.brewery = brewery.strip() if brewery.strip() else beer.brewery
+        beer.price = price
+        if description is not None:
+            beer.description = description.strip()
+        if image is not None:
+            beer.image = image.strip()
 
-                session.commit()
-                return 0
-    return 1
+        session.commit()
+        return beer
 
 def get_number_beers() -> int:
     """
@@ -210,11 +178,18 @@ def get_number_beers_of_user(user_id: str) -> int:
     --------
     count : the number of beers of the user (int)
     """
-    with Session() as session:
+    """with Session() as session:
         statement = select(Users).filter_by(id=user_id)
         user = session.scalar(statement)
         count = len(user.beers)
         return count
+    """
+    with Session() as session:
+        # Query to sum the quantities of all beers in the user's cart
+        total_quantity = session.query(func.sum(CartItem.quantity)).filter_by(user_id=user_id).scalar()
+
+        # If total_quantity is None (no cart items), return 0, otherwise return the sum
+        return total_quantity or 0
 
 def get_beer_by_user(user_id: str) -> list[dict]:
     """
@@ -242,24 +217,6 @@ def get_beer_by_user(user_id: str) -> list[dict]:
 
         return beers_data
     
-def add_owner(beer_id, user_id):
-    """
-    This function adds an owner to a beer
-    We don't delete the previous owner because he can view his sold beers
-
-    Parameters:
-    -----------
-    beer_id : the id of the beer (str)
-    user_id : the id of the user (str)
-    """
-    with Session() as session:
-        statement = select(Beers).filter_by(id=beer_id)
-        beer = session.scalar(statement)
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
-        beer.users.append(user)
-        session.commit()
-        return True
 def drop_beer_panier(beer_id,user_id):
     """
     This function delete the beer corresponding to id
@@ -274,20 +231,37 @@ def drop_beer_panier(beer_id,user_id):
     None : if we find no beer corresponding to the id (NoneTypeObject)
     """
     with Session() as session:
-        # Requête pour récupérer la bière
-        statement = select(Beers).filter_by(id=beer_id)
-        beer = session.scalar(statement)
-        # Requête pour récupérer l'utilisateur
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
-        
-        # Vérifie que la bière et l'utilisateur existent
-        if beer is not None and user is not None:
-            # Supprime l'utilisateur de la liste des utilisateurs de la bière
-            if user in beer.users:
-                beer.users.remove(user)
-                session.commit()
-                return True
+        # Query to find the cart item
+        cart_item = session.query(CartItem).filter_by(beer_id=beer_id, user_id=user_id).first()
+
+        # If cart item exists, delete it
+        if cart_item:
+            # Delete the cart item
+            session.delete(cart_item)
+            session.commit()
+            
+            # Also delete the association from the association table
+            association_entry = association_table.delete().where(
+                (association_table.c.user_id == user_id) & (association_table.c.beer_id == beer_id)
+            )
+            session.execute(association_entry)
+            session.commit()
+            
+            return True
+
+    return False
+
+def update_cart_item_quantity(beer_id: str, user_id: str, quantity: int) -> bool:
+    with Session() as session:
+        # Récupérer l'article du panier correspondant
+        cart_item = session.query(CartItem).filter_by(user_id=user_id, beer_id=beer_id).first()
+
+        if cart_item is None:
+            return False
+
+        # Mettre à jour la quantité
+        cart_item.quantity = quantity
+        session.commit()
         return True
 
 def add_to_cart(beer_id: str, user_id: str):
@@ -405,6 +379,10 @@ def paid_cart(user_id: str):
         for item in cart_items:
             session.delete(item)
         
+        # Supprimer les enregistrements de la table d'association
+        session.execute(association_table.delete().where(association_table.c.user_id == user_id))
+        
+        
         session.commit()
         
         return True
@@ -449,5 +427,42 @@ def get_orders_by_user(user_id: str) -> list[dict]:
             }
             for order in orders
         ]
-        
+        print(orders_data)
         return orders_data
+
+def get_order_details_by_id(user_id: str, order_id: str) -> dict:
+    """
+    Get the details of a specific order for a user.
+
+    Parameters:
+    -----------
+    user_id : str
+        The ID of the user.
+    order_id : str
+        The ID of the order.
+
+    Returns:
+    --------
+    order_details : dict or None
+        A dictionary containing order details if found, else None.
+    """
+    with Session() as session:
+        order = session.query(Order).filter_by(id=order_id, user_id=user_id).first()
+        
+        if order is None:
+            return None
+        
+        order_details = {
+            "order_id": order.id,
+            "total_price": order.total_price,
+            "created_at": order.created_at,
+            "items": [
+                {
+                    "beer_name": item.beer.name,
+                    "quantity": item.quantity,
+                    "price": item.price
+                }
+                for item in order.order_items
+            ]
+        }
+        return order_details

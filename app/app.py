@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from app.database import create_database, initialiser_db, delete_database, vider_db
 from app.errors import ChangeMdpError
+from dotenv import load_dotenv
 
 
 #Structure of the app
@@ -66,3 +67,5 @@ def shutdown_event():
 def handle_exit(*args):
     shutdown_event()
     print("Goodbye World !")
+    
+load_dotenv()

@@ -41,27 +41,12 @@
         </div>
     </div>
 </nav>
-<br>
-<div class="container border rounded-4 border-2 p-4 border-opacity-75 " style=" width: 50%; color: #BA4A00; height: 400px; margin-bottom: 100px;">
-    <h2 class="display-6 text-center">Profil - {{ current_user.group }}</h2><br>
-    <form action="/profile" method="post">
-        <div class="input-group mb-3">
-            <label for="name" class="input-group-text">Nom</label>
-            <input type="text" id="name" class="form-control" name="name" value="{{current_user.name}}" required="true"/>
+
+    <div class="container text-center border rounded border-4 "style=" height: 500px; margin-bottom: 100px; padding-top: 100px;">
+            <div style="font-size: 30px; margin-bottom: 50px;"> Merci pour votre achat, au plaisir de vous revoir ! </div>
+        <div class="grid text-center" >
+            <!-- Button group -->
+            <a href="/liste"><button type="button" class="btn btn-outline-dark">Retour à l'Accueil </button></a>
         </div>
-        <div class="input-group mb-3">
-            <label for="surname" class="input-group-text">Prénom</label>
-            <input type="text" id="surname" class="form-control" name="surname" value="{{current_user.surname}}" required="true"/>
-        </div>
-        <div class="input-group mb-5">
-            <label for="username" class="input-group-text">Nom d'utilisateur</label>
-            <input type="text" id="username" class="form-control" name="username" value="{{current_user.username}}" required="true"/>
-        </div>
-        <div class="grid text-center">
-            <a href="/new_mdp"><button type="button" class="btn btn-outline-dark">Changer de mot de passe</button></a>
-            <button type="submit" class="btn btn-outline-dark">Modifier le profil</button>
-        </div>
-    </form>
-    
-</div>
+    </div>
 {% endblock %}

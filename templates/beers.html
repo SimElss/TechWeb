@@ -1,116 +1,106 @@
 {% extends "index.html" %}
 {% from "beers_macro.html" import show_beers %}
 {% block content %}
-<nav class="navbar navbar-expand-lg " style=" height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
-    <div class="container-fluid border-bottom border-4" style=" padding-bottom: 10px; padding-left: 20px; border-color: #BA4A00;">
-        <a href="/liste" class="navbar-brand " style=" margin-right: 50px; color :#BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+<nav class="navbar navbar-expand-lg z-3 bg-white" style="height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid  bg-white" style="border-bottom: solid; padding-bottom: 10px; padding-right: 80px; padding-left: 30px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand" style="margin-right: 20px; color: #BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-          <!-- Link to home page -->
-          <div class="collapse navbar-collapse fs-5" style="margin-left: 75px;" id="navbarNav">
-              <ul class="navbar-nav end-0" >
-                  <!-- Navigation tabs -->
-                  {%if current_user != None%}
-                  <!-- Check if the current user is an admin -->
-                      <li class="nav-item ">
-                      <a class="nav-link active " href="/liste">Accueil</a>
-                      <!-- Link to home page -->
-                      </li>
-                      <li class="nav-item">
-                          <a class="nav-link link-body-emphasis" style="margin-right: 600px;" href="/profile">Profil</a>
-                          <!-- Link to profile page -->
-                      </li>
-                  {% if current_user.group == "admin" %}
-                      <li class="nav-item">
-                          <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
-                          <!-- Link to admin page -->
-                      </li>
-                      <br>
-                      <!-- Line break -->
-                  </div>
-                  
-                  {% endif %}
-                      <li class="nav-item dropdown" >
-                          <a class="nav-link dropdown-toggle " style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            [{{nb}}] Bonjour Mr/Mlle {{current_user.name}} 
-                          </a>
-                          <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="/panier">Panier [{{nb}}]</a></li>
-                              <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
-                              <li><hr class="dropdown-divider"></li>
-                              <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-dark" type="submit" >Se déconnecter</button>
-                                  <!-- Logout button -->
-                                  </form>
-                              </li>
-                          </ul>
-                      </li>
-                  {%else%}
-                      <li class="nav-item" style="margin-left: auto;">
-                          <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
-                          <!-- Link to login page -->
-                      </li>
-                  {%endif%}
-              </ul>
-          
-      </div>
-  </nav>
-
-<div class="container">
-<!-- End of row -->
-    <!-- Table to display beers
-        <tr>
-            <th>Id</th>
-            <th>Propriétaire</th>
-            <th>Nom</th>
-            <th>Auteur</th>
-            <th>Editeur</th>
-            <th>Prix</th>-->
-            {% if current_user != None%}
-            {%endif%}
-
-        {% for beer in beers %}
-        
-        <div class="col col-sm-12 col-md-12 mb-3 mb-sm-0" style="padding-left:  50px;">
-            <!-- Column for alcohol item -->
-            <div class="row g-0">
-                <div class="col-md-2">
-                    <img src="{{beer.image}}" class="img-fluid rounded-start" alt="{{beer.name}}" style="height: 180px; width: 200px;">
-                </div>
-                <div class="col-md-8">
-                    <div class="card mb-3" style="border-color: #BA4A00; width: 100%;">
-                        <!-- Adjusted card width -->
-                        <div class="card-body text-center">
-                            <!-- Body of the card -->
-                            <h5 class="card-title mb-3">{{ beer.name }}</h5>
-                            <!-- Name of the alcohol -->
-                            <p class="card-text ">{{beer.description}}</p>
-
-                            <p class="card-text">Prix: {{ beer.price }}</p>
-                            <!-- Price of the alcohol -->
-                            {% if current_user != None %}
-                            <!-- Check if user is logged in -->
-                            <form action="/buy/{{beer.id}}" method="post" class="dropdown-item" >
-                                <button class="btn btn-outline-dark" type="submit" style=" width: 200px;">Acheter</button>
-                                  </form>
-                            <!-- Button to buy alcohol -->
-                            {% endif %}
-                        </div>
-                        <!-- End of card body -->
-                    </div>
-                    <!-- End of card -->
-                </div>
-            </div>
+        <div class="collapse navbar-collapse fs-4 bg-white" style="margin-left: 75px;" id="navbarNav">
+            <ul class="navbar-nav">
+                    <li class="nav-item ms-4">
+                        <a class="nav-link active" href="/liste">Accueil</a>
+                    </li>
+                    <li class="nav-item ms-4">
+                        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
+                    </li>
+                    {% if current_user.group == "admin" %}
+                        <li class="nav-item ms-4">
+                            <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                        </li>
+                    {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown bg-white">
+                    <a class="nav-link dropdown-toggle" style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <b>[{{nb}}] </b> Bonjour Mr/Mlle {{current_user.name}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/panier">Panier [{{nb}}]</a></li>
+                        <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="/logout" method="post" class="dropdown-item">
+                                <button class="btn btn-outline-dark" type="submit">Se déconnecter</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-            <!-- End of column -->
-        {% endfor %}
-
-        <!-- Table row for the number of beers -->
-        <br>
-        <div class="grid text-end mb-5" style="width: 84%; font-size: 15px">Nombres d'articles : {{ Nombre }}</div>    
     </div>
-    
-    
+</nav>
 
+<div class="container " style="padding-left: 100px;">
+    <form action="/save" method="get" class="mb-5 text-center" style="padding-left: 50px;">
+        <button class="btn btn-outline-success" type="submit" style=" width: 300px;">
+            Ajouter une bière
+        </button>
+    </form>
+    {% for beer in beers %}         
+<div class="col col-sm-12 col-md-12 mb-2 mb-sm-0" style="padding-left: 50px; max-width: 100%;">
+    <!-- Column for alcohol item -->
+    <div class="row g-0">
+        <div class="col-md-2 rounded">
+            <img src="{{beer.image}}" class="img-fluid rounded-start" alt="{{beer.name}}" style="height: 210px; width: 300px;">
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-3" style="border-color: #BA4A00; width: 900px;">
+                <!-- Adjusted card width -->
+                <div class="card-body">
+                    <!-- Body of the card -->
+                    <h5 class="card-title mb-3">{{ beer.name }}</h5>
+                    <!-- Name of the alcohol -->
+                    <p class="card-text">{{beer.description}}</p>
+                    <p class="card-text">Prix: <b>{{ beer.price }} </b> €</p>
+                    <!-- Price of the alcohol -->
+                    <div class="d-flex justify-content-end align-items-center">
+                        {% if current_user != None %}
+                        <!-- Check if user is logged in -->
+                        <form action="/buy/{{beer.id}}" method="post" class="me-2">
+                            <button class="btn btn-outline-dark" type="submit" style="width: 200px;">Acheter</button>
+                        </form>
+                        <!-- Button to buy alcohol -->
+                        {% endif %}
+                        {% if current_user.group == "admin" %}
+                        <form action="/modify/{{beer.id}}" method="get" class="me-2">
+                            <button class="btn btn-warning" type="submit" style="width: 70px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5"/>
+                                </svg>
+                            </button>
+                        </form>
+                        <form action="/delete/{{beer.id}}" method="post">
+                            <button class="btn btn-outline-danger" type="submit" style="width: 70px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                </svg>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- End of card body -->
+            </div>
+            <!-- End of card -->
+        </div>
+    </div>
+    <!-- End of column -->
+</div>
+{% endfor %}
+        <!-- Table row for the number of beers -->
+    <br>
+    <div class="grid text-end mb-5" style="width: 94%; font-size: 15px">Nombres d'articles : <b> {{ Nombre }}</b></div>    
 </div>
 {% endblock %}
