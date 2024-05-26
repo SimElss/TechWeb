@@ -20,10 +20,7 @@ Ouvrez ensuite un terminal, où vous entrerez dans l’ordre ces commandes :
 3. Installer les librairies : `pip install -r requirements.txt`
 4. Démarrer l'application : `python main.py`
 
-Si tout se passe bien, ceci devrait s’afficher dans le terminal :
-![[Pasted image 20240526133321.png|500]]
-
-Ouvrez alors un navigateur, et copier-coller le lien (ou alors, plus simple, maintenant `CTRL + Clic droit` pour directement ouvrir la page).
+Ouvrez alors un navigateur, et copier-coller le lien (ou alors, plus simple, maintenant `CTRL + Clic gauche` pour directement ouvrir la page).
 
 Apparaîtra alors le menu de connexion. De là, deux choix s’ouvrent à vous qui sont détaillés ci-dessous.
 ## Utilisateur
@@ -48,9 +45,6 @@ Y sont indiqués :
 - Son prix, en euros
 - Une illustration de celle-ci
 - Le stock de bières (si celui-ci est à 0, cela signifie que la bière est en rupture de stock)
-
-Exemple avec la bière “Stark Stout” :
-![[Pasted image 20240526140958.png|500]]
 
 Une fois que le bouton “Acheter” est utilisée, la bière sera ajoutée dans le panier en cours (cela sera indiqué par le compteur se trouvant dans le coin droit de la bannière).
 
