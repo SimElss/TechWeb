@@ -197,9 +197,8 @@ def payer_panier_route(request: Request, user: UserSchema = Depends(login_manage
     
     if paid_cart(user.id):
         send_confirmation_email(user.email)
-
+        
         return RedirectResponse(url="/purchase", status_code=302)
-    
     else:
         return RedirectResponse(url="/panier", status_code=302)
     

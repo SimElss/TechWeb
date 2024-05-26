@@ -25,6 +25,7 @@ class CartItem(Base):
     user = relationship("Users", back_populates="cart_items")
     beer = relationship("Beers", back_populates="cart_items")
 
+
 class Beers(Base):
     __tablename__ = 'beers'
 
