@@ -3,6 +3,7 @@ from typing import Annotated, Optional
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.database import Session
+from app.services.users import send_confirmation_email
 from ..login_manager import login_manager
 from ..services.beers import update_cart_item_quantity, add_to_cart, get_orders_by_user, is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, paid_cart, save_beers, get_number_beers, get_beer_by_id, add_owner
 from ..schemas.users import UserSchema
@@ -195,6 +196,8 @@ def payer_panier_route(request: Request, user: UserSchema = Depends(login_manage
         return RedirectResponse(url="/login", status_code=302)
     
     if paid_cart(user.id):
+        send_confirmation_email(user.email)
+        
         return RedirectResponse(url="/purchase", status_code=302)
     else:
         return RedirectResponse(url="/panier", status_code=302)

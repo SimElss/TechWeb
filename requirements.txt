@@ -6,3 +6,4 @@ SQLAlchemy
 python-multipart
 sqlalchemy.orm
 hashlib
+secure-smtplib
