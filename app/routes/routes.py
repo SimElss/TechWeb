@@ -1,13 +1,10 @@
 from multiprocessing.resource_tracker import getfd
 from typing import Annotated, Optional
 from uuid import uuid4
-from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File
-import shutil
+from fastapi import APIRouter, HTTPException, status, Depends
 from app.database import Session
-from app.models.models import Order
 from ..login_manager import login_manager
-from ..services.beers import update_cart_item_quantity, add_to_cart, get_orders_by_user, is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, paid_cart, save_beers, get_number_beers, get_beer_by_id, add_owner, get_number_beers_client
-from ..services.users import get_beer_owners, get_user_by_beer
+from ..services.beers import update_cart_item_quantity, add_to_cart, get_orders_by_user, is_beer_in_cart, get_all_beers, drop_beer_panier, get_number_beers_of_user, delete_beer, modify_beer, paid_cart, save_beers, get_number_beers, get_beer_by_id, add_owner
 from ..schemas.users import UserSchema
 from ..schemas.beers import Beer
 from fastapi import APIRouter, status, Request, Form
@@ -63,6 +60,7 @@ def delete(id: str):
         return RedirectResponse(url=f"/error/{description}/liste", status_code=302)
     return RedirectResponse(url="/liste", status_code=302)
 
+#route to get the page to modify a beer
 @router.get("/modify/{id}")
 def modify(request: Request, id: str, user: UserSchema = Depends(login_manager.optional)):
     if user is None:
@@ -73,7 +71,7 @@ def modify(request: Request, id: str, user: UserSchema = Depends(login_manager.o
         "modify.html", 
         context={'request': request, 'beer': beer, "beer.id" : id}
     )
-
+#route to modify a beer
 @router.post("/modify/{id}")
 def modify(id: str, name: Annotated[str, Form()], brewery: Annotated[str, Form()], price: Annotated[float, Form()], stock: Annotated[int, Form()], description: Annotated[Optional[str], Form()] = None
 ):
@@ -105,20 +103,14 @@ def save(request: Request, user: UserSchema = Depends(login_manager.optional)):
         "save_beers.html", 
         context={'request': request, 'current_user': user}
     )
-
+#Route to add a new beer (POST request)
 @router.post("/save")
-def save(
-    name: Annotated[str, Form()],
-    brewery: Annotated[str, Form()],
-    price: Annotated[float, Form()],
-    stock: Annotated[int, Form()],
-    description: Annotated[str, Form()]
-):
-    # Définir le chemin de l'image
+def save(name: Annotated[str, Form()], brewery: Annotated[str, Form()], price: Annotated[float, Form()], stock: Annotated[int, Form()], description: Annotated[str, Form()]):
+    # define the path de the image
     image_name = f"{name.strip().replace(' ', '_').lower()}.png"
     image_path = f"./static/{image_name}"
     
-    # Créer le dictionnaire pour la nouvelle bière
+    # create a new dictionnary for the beer
     new_beer = {
         "id": str(uuid4()),
         "name": name.strip(),
@@ -129,7 +121,6 @@ def save(
         "image": image_path,
     }
     
-    # Valider le modèle de la bière
     new_beer = Beer.model_validate(new_beer)
     saved_beers = save_beers(new_beer)
 
@@ -139,7 +130,8 @@ def save(
         return RedirectResponse(url=f"/error/{description}/save", status_code=302)
 
     return RedirectResponse(url="/liste", status_code=302)    
-# Route to but the beer (POST request)
+
+# Route to buy the beer (POST request)
 @router.post("/buy/{id}")
 def buy(id: str, user = Depends(login_manager.optional)):
     #We verify that the user is connected
@@ -196,7 +188,7 @@ def update_quantity(beer_id: str, quantity: int = Form(...), user = Depends(logi
         raise HTTPException(status_code=500, detail="Failed to update quantity")
 
     return RedirectResponse(url="/panier", status_code=302)
-
+# Route to pay the cart
 @router.post('/paiement')
 def payer_panier_route(request: Request, user: UserSchema = Depends(login_manager)):
     if user is None:
@@ -207,6 +199,7 @@ def payer_panier_route(request: Request, user: UserSchema = Depends(login_manage
     else:
         return RedirectResponse(url="/panier", status_code=302)
     
+# Route to get to the order of the user
 @router.get('/order')
 def historique(request: Request, user: UserSchema = Depends(login_manager)):
     if user is None:
@@ -219,7 +212,7 @@ def historique(request: Request, user: UserSchema = Depends(login_manager)):
         "order.html", 
         context={'request': request, 'current_user': user, 'orders': orders, 'nb':nbUser}
     )
-
+#route to go to the purchase html
 @router.get("/purchase")
 def list_beers(request: Request, user: UserSchema = Depends(login_manager.optional)):
     nbUser = get_number_beers_of_user(user.id)
@@ -227,7 +220,7 @@ def list_beers(request: Request, user: UserSchema = Depends(login_manager.option
         "purchase.html",
         context={'request': request, 'nb' : nbUser , 'current_user': user}
     )
-
+# Route to get the detail of all of the order 
 @router.get('/orderdetail/')
 def historique(request: Request, user: UserSchema = Depends(login_manager)):
     if user is None:

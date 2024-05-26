@@ -54,18 +54,19 @@
 <div class="col col-sm-12 col-md-12 mb-2 mb-sm-0" style="padding-left: 50px; max-width: 100%;">
     <!-- Column for alcohol item -->
     <div class="row g-0">
-        <div class="col-md-2 rounded">
-            <img src="{{beer.image}}" class="img-fluid rounded-start" alt="{{beer.name}}" style="height: 210px; width: 300px;">
+        <div class="col-md-2 rounded pt-1">
+            <img src="{{beer.image}}" class="img-fluid rounded-start" alt="{{beer.name}}" style="padding-top: 1px; height: 240px; width: 300px;">
         </div>
         <div class="col-md-8">
-            <div class="card mb-3" style="border-color: #BA4A00; width: 900px;">
+            <div class="card mb-3" style="border-color: #BA4A00; width: 900px; height: 250px;">
                 <!-- Adjusted card width -->
                 <div class="card-body">
                     <!-- Body of the card -->
                     <h5 class="card-title mb-3">{{ beer.name }}</h5>
                     <!-- Name of the alcohol -->
                     <p class="card-text">{{beer.description}}</p>
-                    <p class="card-text">Prix: <b>{{ beer.price }} </b> €</p>
+                    <p class="card-text">Prix: <b>{{ beer.price }} </b> € <p> Stock: <b> {{ beer.stock }} </b></p></p>
+                    
                     <!-- Price of the alcohol -->
                     <div class="d-flex justify-content-end align-items-center">
                         {% if current_user != None %}

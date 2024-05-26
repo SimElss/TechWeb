@@ -5,47 +5,50 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+# Association table for many-to-many relationship between Users and Beers
 association_table = Table(
     "association_table",
     Base.metadata,
     Column("user_id", ForeignKey("users.id"), primary_key=True),
-    Column("beer_id", ForeignKey("beers.id"), primary_key=True),
+    Column("beer_id", ForeignKey("beers.id", ondelete="CASCADE"), primary_key=True),
 )
-
 
 class CartItem(Base):
     __tablename__ = 'cart_items'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    beer_id = Column(Integer, ForeignKey('beers.id'))
-    quantity = Column(Integer,nullable= False)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
+    beer_id = Column(Integer, ForeignKey('beers.id', ondelete="SET NULL"))
+    quantity = Column(Integer, nullable=False)
 
     # Relationship with Users and Beers
     user = relationship("Users", back_populates="cart_items")
     beer = relationship("Beers", back_populates="cart_items")
-    
 
 class Beers(Base):
     __tablename__ = 'beers'
-    id: Mapped[str] = mapped_column(String(72), primary_key=True)
-    name: Mapped[str] = mapped_column(String(72))
-    brewery: Mapped[str] = mapped_column(String(72))
-    price: Mapped[float] = mapped_column(Float)
-    stock: Mapped[int] = mapped_column(Integer)
-    description: Mapped[str] = mapped_column(String(72))
-    image: Mapped[str] = mapped_column(String(72))
 
-    users: Mapped[list["Users"]] = relationship(
-        secondary=association_table, back_populates="beers"
+    id = Column(String(72), primary_key=True)
+    name = Column(String(72))
+    brewery = Column(String(72))
+    price = Column(Float)
+    stock = Column(Integer)
+    description = Column(String(72))
+    image = Column(String(72))
+    isdeleted = Column(Boolean, default=False)
+
+    users = relationship(
+        "Users",
+        secondary=association_table,
+        back_populates="beers"
     )
     cart_items = relationship("CartItem", back_populates="beer")
-
+    
 class Admins(Base):
     __tablename__ = 'admins'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), unique=True)
-    user: Mapped["Users"] = relationship()
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True)
+    user: Mapped["Users"] = relationship("Users", back_populates="admin")
 
 class Users(Base):
     __tablename__ = 'users'
@@ -61,7 +64,7 @@ class Users(Base):
     beers: Mapped[list["Beers"]] = relationship(
         secondary=association_table, back_populates="users"
     )
-    admin: Mapped["Admins"] = relationship()
+    admin: Mapped["Admins"] = relationship("Admins", back_populates="user")
     cart_items = relationship("CartItem", back_populates="user")
     orders = relationship("Order", back_populates="user")
 
@@ -69,7 +72,7 @@ class Order(Base):
     __tablename__ = 'orders'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
     total_price = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
     
@@ -80,8 +83,8 @@ class OrderItem(Base):
     __tablename__ = 'order_items'
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    beer_id = Column(Integer, ForeignKey('beers.id'))
+    order_id = Column(Integer, ForeignKey('orders.id', ondelete="CASCADE"))
+    beer_id = Column(Integer, ForeignKey('beers.id', ondelete="SET NULL"))
     quantity = Column(Integer)
     price = Column(Float)
     

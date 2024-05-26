@@ -1,16 +1,28 @@
 from typing import Optional
 from sqlalchemy import select, func
-
-
 from ..schemas.beers import Beer
 from ..database import Session
 from ..models.models import Beers, Order, OrderItem, Users, CartItem, association_table
 
-
-# Fonction pour sauvegarder les bières
 def save_beers(new_beer: Beer):
+    """
+    This function saves a new beer in the database.
+
+    Parameters:
+    -----------
+    new_beer : Beer
+        An instance of the Beer schema representing the new beer to be saved.
+
+    Returns:
+    --------
+    Beers
+        The newly created Beers entity.
+    None
+        If the new beer data is invalid.
+    """
     from app.database import Session, Beers
     with Session() as session:
+        # Clean up the input data
         new_beer.id = new_beer.id.strip()
         new_beer.name = new_beer.name.strip()
         new_beer.brewery = new_beer.brewery.strip()
@@ -19,6 +31,7 @@ def save_beers(new_beer: Beer):
         if not new_beer.id or not new_beer.name or not new_beer.brewery:
             return None
 
+        # Create a new Beers entity
         new_beer_entity = Beers(
             id=new_beer.id,
             name=new_beer.name,
@@ -26,28 +39,32 @@ def save_beers(new_beer: Beer):
             price=new_beer.price,
             stock=new_beer.stock,
             description=new_beer.description,
-            image=new_beer.image
+            image=new_beer.image,
+            isdeleted=False
         )
         session.add(new_beer_entity)
         session.commit()
         return new_beer_entity
-
+    
 def get_beer_by_id(id: str):
-    """"
-    This function returns a beer object using it id
+    """
+    This function returns a beer object using its id.
 
     Parameters :
     ------------
-    id: id of the beer (str)
+    id: str
+        The ID of the beer.
 
-    Return :
+    Returns :
     --------
-    Beer.model_validate(beer) : the found beer (Object Beer)
-    None : If no beer has benn found (NoneTypeObject)
+    Beer
+        The found beer.
+    None
+        If no beer has been found.
     """
     with Session() as session:
-        statement = select(Beers).filter_by(id=id)
-        beer = session.scalar(statement) 
+        statement = select(Beers).filter_by(id=id, isdeleted=False)
+        beer = session.scalar(statement)
         if beer is not None:
             return Beer(
                 id=beer.id,
@@ -62,21 +79,21 @@ def get_beer_by_id(id: str):
 
 def get_all_beers() -> list[Beer]:
     """
-    This function returns the list of the beers
+    This function returns the list of all non-deleted beers.
 
-    Return :
+    Returns :
     --------
-    beers_data : thz list of beers (list of Object Beer)
+    list[Beer]
+        The list of beers.
     """
     with Session() as session:
-        statement = select(Beers) #Model Beer
+        statement = select(Beers).filter_by(isdeleted=False)
         beers_data = session.scalars(statement).unique().all()
-        #Schema Beers
         return [
             Beer(
                 id=beer.id,
                 name=beer.name,
-                brewery = beer.brewery,
+                brewery=beer.brewery,
                 price=beer.price,
                 stock=beer.stock,
                 description=beer.description,
@@ -85,42 +102,84 @@ def get_all_beers() -> list[Beer]:
             for beer in beers_data
         ]
 
-
 def delete_beer(beer_id: str):
+    """
+    This function marks a beer as deleted.
+
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer to be deleted.
+
+    Returns:
+    --------
+    bool
+        True if the beer was successfully marked as deleted, False otherwise.
+    """
     with Session() as session:
         statement = select(Beers).filter_by(id=beer_id)
         result = session.execute(statement)
         beer = result.fetchone()
+        
         if beer is None:
             return None
-        session.delete(beer[0])  # Accédez à la première colonne (0) qui contient l'objet Beer
+        
+        # Mark the beer as deleted
+        beer[0].isdeleted = True
         session.commit()
+        
         return True
     
-def add_owner(beer_id, user_id):
+def add_owner(beer_id: str, user_id: str):
     """
-    This function adds an owner to a beer
-    We don't delete the previous owner because he can view his sold beers
+    This function adds an owner to a beer.
 
     Parameters:
     -----------
-    beer_id : the id of the beer (str)
-    user_id : the id of the user (str)
+    beer_id : str
+        The ID of the beer.
+    user_id : str
+        The ID of the user.
     """
     with Session() as session:
-        statement = select(Beers).filter_by(id=beer_id)
-        beer = session.scalar(statement)
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
-        beer.users.append(user)
-        session.commit()
-        return True
+        beer = session.scalar(select(Beers).filter_by(id=beer_id))
+        user = session.scalar(select(Users).filter_by(id=user_id))
+        if beer and user:
+            beer.users.append(user)
+            session.commit()
+            return True
+        return False
     
 def modify_beer(beer_id: str, image: Optional[str], name: str, brewery: str, price: float, stock: int, description: Optional[str]):
-    
+    """
+    This function modifies the details of a beer.
+
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer to be modified.
+    image : Optional[str]
+        The new image URL of the beer (optional).
+    name : str
+        The new name of the beer.
+    brewery : str
+        The new brewery of the beer.
+    price : float
+        The new price of the beer.
+    stock : int
+        The new stock quantity of the beer.
+    description : Optional[str]
+        The new description of the beer (optional).
+
+    Returns:
+    --------
+    Beers
+        The modified beer entity.
+    int
+        1 if no beer was found with the given ID.
+    """
     with Session() as session:
-        statement = select(Beers).filter_by(id=beer_id)
-        beer = session.scalar(statement)
+        beer = session.scalar(select(Beers).filter_by(id=beer_id))
         
         if beer is None:
             return 1  # No beer found with this ID
@@ -137,98 +196,91 @@ def modify_beer(beer_id: str, image: Optional[str], name: str, brewery: str, pri
         session.commit()
         return beer
 
+def get_active_beers():
+    """
+    This function returns all active (non-deleted) beers.
+
+    Returns:
+    --------
+    list[Beers]
+        The list of active beers.
+    """
+    with Session() as session:
+        statement = select(Beers).filter_by(isdeleted=False)
+        result = session.execute(statement).scalars().all()
+        return result
+
 def get_number_beers() -> int:
     """
-    This function returns the current number of beers by id
+    This function returns the current number of beers.
 
-    Return :
+    Returns:
     --------
-    count : the number of beers (int) 
+    int
+        The number of beers.
     """
     with Session() as session:
         statement = select(func.count(Beers.id))
         count = session.scalar(statement)
         return count
     
-def get_number_beers_client() -> int:
-    """
-    This function return the beers of the client view so only the beers which are not bought and by id
-
-    Return :
-    --------
-    count : the number of beers (int)
-    """
-
-    with Session() as session:
-        statement = select(func.count(Beers.id)).filter_by(bought=False)
-        count = session.scalar(statement)
-        return count
-    
-
-
 def get_number_beers_of_user(user_id: str) -> int:
     """
-    This function returns the number of beers of a user
+    This function returns the number of beers in a user's cart.
 
     Parameters:
     -----------
-    user_id : the id of the user (str)
+    user_id : str
+        The ID of the user.
 
-    Return :
+    Returns:
     --------
-    count : the number of beers of the user (int)
-    """
-    """with Session() as session:
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
-        count = len(user.beers)
-        return count
+    int
+        The number of beers in the user's cart.
     """
     with Session() as session:
-        # Query to sum the quantities of all beers in the user's cart
         total_quantity = session.query(func.sum(CartItem.quantity)).filter_by(user_id=user_id).scalar()
-
-        # If total_quantity is None (no cart items), return 0, otherwise return the sum
         return total_quantity or 0
 
 def get_beer_by_user(user_id: str) -> list[dict]:
     """
-    This function returns the list of beers and their quantities in the cart of a user.
+    This function returns the list of beers and their quantities in a user's cart.
 
     Parameters:
     -----------
-    user_id : the id of the user (str)
+    user_id : str
+        The ID of the user.
 
-    Return :
+    Returns:
     --------
-    beers_data : the list of beers with their quantities (list of dict)
+    list[dict]
+        The list of beers with their quantities.
     """
     with Session() as session:
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
         cart_items = session.query(CartItem).filter_by(user_id=user_id).all()
-
         beers_data = [
             {
                 "beer": session.query(Beers).filter_by(id=item.beer_id).first(),
                 "quantity": item.quantity
             } for item in cart_items
         ]
-
         return beers_data
     
-def drop_beer_panier(beer_id,user_id):
+def drop_beer_panier(beer_id: str, user_id: str):
     """
-    This function delete the beer corresponding to id
+    This function removes a beer from the user's cart.
 
     Parameters:
     -----------
-    beer_id : the id of the beer which will be deleted (str)
+    beer_id : str
+        The ID of the beer to be removed.
+    user_id : str
+        The ID of the user.
 
-    Return :
+    Returns:
     --------
-    1 : to check if the beer has been deleted (int)
-    None : if we find no beer corresponding to the id (NoneTypeObject)
+    bool
+        True if the beer was successfully removed, False otherwise.
     """
     with Session() as session:
         # Query to find the cart item
@@ -236,7 +288,6 @@ def drop_beer_panier(beer_id,user_id):
 
         # If cart item exists, delete it
         if cart_item:
-            # Delete the cart item
             session.delete(cart_item)
             session.commit()
             
@@ -252,14 +303,30 @@ def drop_beer_panier(beer_id,user_id):
     return False
 
 def update_cart_item_quantity(beer_id: str, user_id: str, quantity: int) -> bool:
+    """
+    This function updates the quantity of a beer in the user's cart.
+
+    Parameters:
+    -----------
+    beer_id : str
+        The ID of the beer.
+    user_id : str
+        The ID of the user.
+    quantity : int
+        The new quantity of the beer.
+
+    Returns:
+    --------
+    bool
+        True if the quantity was successfully updated, False otherwise.
+    """
     with Session() as session:
-        # Récupérer l'article du panier correspondant
         cart_item = session.query(CartItem).filter_by(user_id=user_id, beer_id=beer_id).first()
 
         if cart_item is None:
             return False
 
-        # Mettre à jour la quantité
+        # Update the quantity
         cart_item.quantity = quantity
         session.commit()
         return True
@@ -274,6 +341,11 @@ def add_to_cart(beer_id: str, user_id: str):
         The ID of the beer.
     user_id : str
         The ID of the user.
+
+    Returns:
+    --------
+    bool
+        True if the beer was successfully added to the cart, False otherwise.
     """
     with Session() as session:
         try:
@@ -319,15 +391,17 @@ def is_beer_in_cart(beer_id: str, user_id: str) -> bool:
     
 def get_price_cart(user_id: str) -> float:
     """
-    This function returns the total price of beers owned by a user
+    This function returns the total price of beers in a user's cart.
 
     Parameters:
     -----------
-    user_id : the id of the user (str)
+    user_id : str
+        The ID of the user.
 
-    Return :
+    Returns:
     --------
-    total_price : the total price of the user's beers (float)
+    float
+        The total price of the beers in the user's cart.
     """
     with Session() as session:
         statement = select(Users).filter_by(id=user_id)
@@ -337,51 +411,65 @@ def get_price_cart(user_id: str) -> float:
     
 def paid_cart(user_id: str):
     """
-    Cette fonction gère le paiement du panier et ajoute la commande à l'historique.
+    This function handles the payment of the user's cart and adds the order to the history.
 
-    Paramètres :
-    ------------
+    Parameters:
+    -----------
     user_id : str
-        L'ID de l'utilisateur.
+        The ID of the user.
 
-    Retour :
+    Returns:
     --------
     bool
-        True si le paiement est réussi, False sinon.
+        True if the payment is successful, False otherwise.
     """
     with Session() as session:
-        # Récupérer les articles du panier de l'utilisateur
+        # Retrieve the items in the user's cart
         cart_items = session.query(CartItem).filter_by(user_id=user_id).all()
         
         if not cart_items:
             return False
         
-        # Calculer le prix total
+        # Calculate the total price
         total_price = sum(item.quantity * item.beer.price for item in cart_items)
         
-        # Créer une nouvelle commande
+        # Create a new order
         new_order = Order(user_id=user_id, total_price=total_price)
         session.add(new_order)
         session.commit()
         session.refresh(new_order)
         
-        # Ajouter les articles de la commande
+        # Add the items to the order and update the stock
         for item in cart_items:
-            order_item = OrderItem(
-                order_id=new_order.id,
-                beer_id=item.beer_id,
-                quantity=item.quantity,
-                price=item.beer.price
-            )
-            session.add(order_item)
+            # Retrieve the corresponding beer
+            beer = session.query(Beers).filter_by(id=item.beer_id).first()
+            
+            if beer:
+                # Check if there is enough stock
+                if beer.stock < item.quantity:
+                    # If not enough stock, cancel the transaction
+                    session.rollback()
+                    return False
+                
+                # Decrease the stock
+                beer.stock -= item.quantity
+                session.add(beer)
+                
+                # Add the order item
+                order_item = OrderItem(
+                    order_id=new_order.id,
+                    beer_id=item.beer_id,
+                    quantity=item.quantity,
+                    price=item.beer.price
+                )
+                session.add(order_item)
         
-        # Supprimer les articles du panier
+        # Remove the items from the cart
         for item in cart_items:
             session.delete(item)
         
-        # Supprimer les enregistrements de la table d'association
+        # Remove the records from the association table
         session.execute(association_table.delete().where(association_table.c.user_id == user_id))
-        
         
         session.commit()
         
@@ -389,27 +477,22 @@ def paid_cart(user_id: str):
     
 def get_orders_by_user(user_id: str) -> list[dict]:
     """
-    Cette fonction retourne la liste des commandes et leurs articles pour un utilisateur donné.
+    This function returns the list of orders and their items for a given user.
 
-    Paramètres:
+    Parameters:
     -----------
     user_id : str
-        L'ID de l'utilisateur.
+        The ID of the user.
 
-    Retour:
-    -------
-    orders_data : list[dict]
-        La liste des commandes avec leurs articles et quantités.
+    Returns:
+    --------
+    list[dict]
+        The list of orders with their items and quantities.
     """
     with Session() as session:
-        # Requête pour récupérer l'utilisateur et ses commandes
-        statement = select(Users).filter_by(id=user_id)
-        user = session.scalar(statement)
+        # Retrieve all orders associated with the user, including those with deleted beers
+        orders = session.query(Order).filter_by(user_id=user_id).all()
         
-        if user is None:
-            return []
-        
-        orders = user.orders
         orders_data = [
             {
                 "order_id": order.id,
@@ -418,7 +501,7 @@ def get_orders_by_user(user_id: str) -> list[dict]:
                 "items": [
                     {
                         "beer_id": item.beer_id,
-                        "beer_name": item.beer.name,
+                        "beer_name": item.beer.name if item.beer is not None else "Deleted Beer",
                         "quantity": item.quantity,
                         "price": item.price
                     }
@@ -427,9 +510,8 @@ def get_orders_by_user(user_id: str) -> list[dict]:
             }
             for order in orders
         ]
-        print(orders_data)
         return orders_data
-
+    
 def get_order_details_by_id(user_id: str, order_id: str) -> dict:
     """
     Get the details of a specific order for a user.
@@ -443,7 +525,7 @@ def get_order_details_by_id(user_id: str, order_id: str) -> dict:
 
     Returns:
     --------
-    order_details : dict or None
+    dict or None
         A dictionary containing order details if found, else None.
     """
     with Session() as session:

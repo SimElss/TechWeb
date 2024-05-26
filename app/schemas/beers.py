@@ -11,8 +11,5 @@ class Beer(BaseModel):
     stock: int
     description: str
     image: str
-
-    @staticmethod
-    def model_validate(data):
-        return Beer(**data)
+    isdeleted: bool = False
 
