@@ -41,27 +41,46 @@
         </div>
     </div>
 </nav>
-<br>
-<div class="container border rounded-4 border-2 p-4 border-opacity-75 " style=" width: 50%; color: #BA4A00; height: 400px; margin-bottom: 100px;">
-    <h2 class="display-6 text-center">Profil - {{ current_user.group }}</h2><br>
-    <form action="/profile" method="post">
-        <div class="input-group mb-3">
-            <label for="name" class="input-group-text">Nom</label>
-            <input type="text" id="name" class="form-control" name="name" value="{{current_user.name}}" required="true"/>
-        </div>
-        <div class="input-group mb-3">
-            <label for="surname" class="input-group-text">Prénom</label>
-            <input type="text" id="surname" class="form-control" name="surname" value="{{current_user.surname}}" required="true"/>
-        </div>
-        <div class="input-group mb-5">
-            <label for="username" class="input-group-text">Nom d'utilisateur</label>
-            <input type="text" id="username" class="form-control" name="username" value="{{current_user.username}}" required="true"/>
-        </div>
-        <div class="grid text-center">
-            <a href="/new_mdp"><button type="button" class="btn btn-outline-dark">Changer de mot de passe</button></a>
-            <button type="submit" class="btn btn-outline-dark">Modifier le profil</button>
-        </div>
-    </form>
-    
+
+<div class="container">
+    <h3 class="grid text-center mb-5 p-3" style=" color: #BA4A00"> Détails des commandes</h5>
+    <table class="table table-hover text-center" style="height: 300px; margin-bottom: 100px;">
+            {% for order in orders %}
+            <tr>
+                <th>Commande n° {{ order.order_id }}</th>
+                <th>Name</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+                <th>Prix Total</th>
+                
+            </tr>
+            
+                {% for item in order['items'] %}
+                <tr>
+                    <td></td>
+                    <td>{{ item['beer_name'] }} </td>
+                    <td>{{ item['quantity'] }}</td>
+                    <td>{{ item['price'] }}</td>
+                    
+                
+                {% endfor %}
+                <td>{{ order.total_price }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+    <div class="grid text-center" >
+        <!-- Button group -->
+        <a href="/order"><button type="button" class="btn btn-outline-dark mb-5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                <path fill-rule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+              </svg>
+            Retour
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                <path fill-rule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+              </svg>
+        </button></a>
+    </div>
 </div>
 {% endblock %}

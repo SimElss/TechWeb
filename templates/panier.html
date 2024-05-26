@@ -1,73 +1,70 @@
 {% extends "index.html" %}
-{% from "beer_macro.html" import show_beers %}
+{% from "beers_macro.html" import show_beers %}
 {% block content %}
-<nav class="navbar navbar-expand-lg bg-body-tertiary bg-warning" style="margin-bottom: 20px;">
-    <div class="container-fluid border-bottom border-4 border-warning">
-        <a href="/liste" class="navbar-brand text-warning" style="font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
+<nav class="navbar navbar-expand-lg z-3 bg-white" style="height: 200px; border-color: #BA4A00; margin-bottom: 20px;">
+    <div class="container-fluid  bg-white" style="border-bottom: solid; padding-bottom: 10px; padding-right: 80px; padding-left: 30px; border-color: #BA4A00;">
+        <a href="/liste" class="navbar-brand" style="margin-right: 20px; color: #BA4A00; font-size: 75px; text-decoration: none; font-family: 'Brush Script MT', cursive;">BuyBeer</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Link to home page -->
-        <div class="collapse navbar-collapse fs-5" style="margin-left: 75px;" id="navbarNav">
-            <ul class="navbar-nav end-0" >
-                <!-- Navigation tabs -->
-                {%if current_user != None%}
-                <!-- Check if the current user is an admin -->
-                    <li class="nav-item ">
-                    <a class="nav-link active " href="/liste">Accueil</a>
-                    <!-- Link to home page -->
+        <div class="collapse navbar-collapse fs-4 bg-white" style="margin-left: 75px;" id="navbarNav">
+            <ul class="navbar-nav">
+                    <li class="nav-item ms-4">
+                        <a class="nav-link active" href="/liste">Accueil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link link-body-emphasis" style="margin-right: 600px;" href="/profile">Profil</a>
-                        <!-- Link to profile page -->
+                    <li class="nav-item ms-4">
+                        <a class="nav-link link-body-emphasis" href="/profile">Profil</a>
                     </li>
-                {% if current_user.group == "admin" %}
-                    <li class="nav-item">
-                        <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
-                        <!-- Link to admin page -->
-                    </li>
-                    <br>
-                    <!-- Line break -->
-                </div>
-                
-                {% endif %}
-                    <li class="nav-item dropdown" >
-                        <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Bonjour Mr/Mlle {{current_user.name}}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/panier">Panier</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><form action="/logout" method="post" class="dropdown-item" ><button class="btn btn-outline-warning" type="submit" >Se déconnecter</button>
-                                <!-- Logout button -->
-                                </form></a>
-                            </li>
-                        </ul>
-                    </li>
-                {%else%}
-                    <li class="nav-item" style="margin-left: auto;">
-                        <a href="/login"><button class="btn btn-danger" type="button">Quitter l'application</button></a>
-                        <!-- Link to login page -->
-                    </li>
-                {%endif%}
+                    {% if current_user.group == "admin" %}
+                        <li class="nav-item ms-4">
+                            <a class="nav-link link-body-emphasis" href="/administration">Admin</a>
+                        </li>
+                    {% endif %}
             </ul>
-        
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown bg-white">
+                    <a class="nav-link dropdown-toggle" style="color: #BA4A00;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <b>[{{nb}}] </b> Bonjour Mr/Mlle {{current_user.name}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/panier">Panier [{{nb}}]</a></li>
+                        <li><a class="dropdown-item" href="/order">Historique de commande</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="/logout" method="post" class="dropdown-item">
+                                <button class="btn btn-outline-dark" type="submit">Se déconnecter</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
-<h5> Nombres de livres : {{nb}} </h5>
-    <table class="table table-hover">
-        <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>Auteur</th>
-            <th>Editeur</th>
-            <th>Prix</th>
-            <th>Etat</th>
-            <th>Actions</th>
-        </tr>
-        {% for beer in beers %}
-            {{ show_beers(beer.id, beer.name, beer.Author, beer.Editor, beer.price, current_user, in_profile, beer.bought) }}
-        {% endfor%}
-    </table>
-</div>
+
+    <div class="container">
+    <h3 class="grid text-center mb-5 p-3" style=" color: #BA4A00"> Récapitulatif de votre panier </h5>
+        <table class="table table-hover text-center" style="height: 200px; ">
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Brewery</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Quantity</th>
+                <th><th>
+            </tr>
+            {% for item in beers %}
+                {{ show_beers(item.beer.id, item.beer.name, item.beer.brewery, item.beer.price, item.beer.stock, item.beer.description, item.quantity) }}
+            {% endfor%}
+            
+        </table>
+        <h5 class="grid text-end mt-5 " style="font-size: 15px;"> Nombres d'articles dans le panier : {{nb}} </h5>
+        <div class="grid text-center" style="margin-top: 50px; margin-bottom: 50px;">
+            <form action="/paiement" method="POST">
+                <div id="liveAlertPlaceholder"></div>
+                <button type="submit" class="btn btn-outline-dark" style="width: 50%" id="liveAlertBtn">Payer le panier</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}

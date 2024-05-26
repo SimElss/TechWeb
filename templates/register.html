@@ -1,11 +1,13 @@
 {% extends "index.html" %}
 {% block content %}
+<div class='grid text-center mb-5' style="border-bottom: solid; color :#BA4A00;font-size: 125px; text-decoration: none; font-family: 'Brush Script MT', cursive;">
+    Buybeer - inscription
+</div>
 <div class="container">
     <!-- Container for registration form -->
     <div class="row justify-content-center">
         <div class="col-4">
-            <h2 class="text-center">Inscription</h2>
-            <form action="/register" method="post">
+            <form action="/register" method="post" class="text-center">
                 <!-- Form for registration -->
                 <div class="mb-3">
                     <!-- Form group for username -->
@@ -38,7 +40,7 @@
                     <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
                     <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
                 </div>
-                <button type="submit" class="btn btn-primary">S'inscrire</button>
+                <button type="submit" class="btn btn-outline-dark mb-4 text-center">S'inscrire</button>
                 <!-- Submit button for registration form -->
             </form>
             <p class="text-center">Déjà un compte ? <a href="/login">Connectez-vous</a></p>

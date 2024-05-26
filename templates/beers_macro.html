@@ -1,4 +1,4 @@
-{% macro show_beers(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
+{% macro show_beers2(id, name, Author, Editor, price, user, in_profile, bought, owner=None, new_owner=None) %}
 <!-- Define a macro named show_beers with parameters for beer information -->
     {% if (new_owner != None and owner.id == new_owner) or new_owner == None%}
     <tr>
@@ -48,4 +48,41 @@
         {%endif%}
     </tr>
     {%endif%}
+{% endmacro %}
+{% macro show_beers(id, name, brewery, price, stock, description, quantity) %}
+<!-- Define a macro named show_books with parameters for book information -->
+    <tr>
+    <!-- Start a table row -->
+        <td></td>
+        <td>{{ name }}</td>
+        <td>{{ brewery }}</td>
+        <td>{{ price }}</td>
+        <td>{{ stock }}</td>
+        <td>
+            <form action="/update_quantity/{{id}}" method="post">
+                <div class="input-group position-relative">
+                    <input type="number" name="quantity" value="{{ quantity }}" min="0" class="form-control" style="width: 5px;">
+                    <button class="btn btn-outline-dark position-relative" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                          </svg>
+
+                    </button>
+                </div>
+                </form>
+        </td>
+        <td>
+            <form action="/deletepanier/{{id}}" method="post">
+            <!-- Form to delete beer -->
+                <button class="btn btn-outline-dark" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                      </svg>
+                </button>
+                <!-- Submit button for deletion -->
+            </form>
+        
+        </td>
+    </tr>
 {% endmacro %}
